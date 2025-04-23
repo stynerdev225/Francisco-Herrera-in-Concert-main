@@ -1,0 +1,1 @@
+                            <h3 className="text-white text-3xl md:text-5xl uppercase tracking-tight font-black drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] text-center mb-6">{t("latest.music")}</h3>

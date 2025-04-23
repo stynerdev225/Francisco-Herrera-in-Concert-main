@@ -1,0 +1,466 @@
+"use client"
+
+import React, { useState } from "react"
+import Image from "next/image"
+import Link from "next/link"
+import { useLanguage } from "@/context/LanguageContext"
+import { Play, Pause, Info, Download, ExternalLink, Share2, Heart } from "lucide-react"
+import { Button } from "@/components/ui/button"
+
+// Define types for song data
+interface Song {
+    id: number
+    title: string
+    duration: string
+    price: string | null
+    freeDownload: boolean
+    hasInfo: boolean
+    hasLyrics: boolean
+    previewUrl?: string
+}
+
+interface Album {
+    id: string
+    title: string
+    artist: string
+    cover: string
+    price: string
+    description: {
+        en: string
+        es: string
+    }
+    songs: Song[]
+}
+
+// Album data
+const albums: Album[] = [
+    {
+        id: "honor-migrante",
+        title: "HONOR MIGRANTE",
+        artist: "Francisco J Herrera",
+        cover: "/images/francisco-concert-poster.png",
+        price: "$10.00",
+        description: {
+            en: "Life, Joys, Struggle, Triumphs, Dignity of Migrant People in Song. Enjoy it, share it with friends and family.",
+            es: "La vida, los gozos, luchas, triunfos, Dignidad del pueblo migrante en Canción. Disfrutala, compartela con amigos y familia."
+        },
+        songs: [
+            {
+                id: 1,
+                title: "Nuevo Sol",
+                duration: "2:24",
+                price: null,
+                freeDownload: true,
+                hasInfo: true,
+                hasLyrics: false
+            },
+            {
+                id: 2,
+                title: "Saber ante la Migra",
+                duration: "3:33",
+                price: null,
+                freeDownload: true,
+                hasInfo: true,
+                hasLyrics: false
+            },
+            {
+                id: 3,
+                title: "Pueblo Pueblo",
+                duration: "3:21",
+                price: "$0.99",
+                freeDownload: false,
+                hasInfo: true,
+                hasLyrics: false
+            },
+            {
+                id: 4,
+                title: "Palomita de la Ciudad",
+                duration: "3:15",
+                price: "$0.99",
+                freeDownload: false,
+                hasInfo: false,
+                hasLyrics: true
+            },
+            {
+                id: 5,
+                title: "Yo Te Amaré",
+                duration: "3:41",
+                price: "$0.99",
+                freeDownload: false,
+                hasInfo: false,
+                hasLyrics: true
+            },
+            {
+                id: 6,
+                title: "Pelotita Blanca",
+                duration: "3:32",
+                price: "$0.99",
+                freeDownload: false,
+                hasInfo: false,
+                hasLyrics: false
+            },
+            {
+                id: 7,
+                title: "Carrito de Fruta",
+                duration: "2:51",
+                price: "$0.99",
+                freeDownload: false,
+                hasInfo: true,
+                hasLyrics: false
+            },
+            {
+                id: 8,
+                title: "Mujeres de la Maquila",
+                duration: "4:19",
+                price: "$0.99",
+                freeDownload: false,
+                hasInfo: false,
+                hasLyrics: false
+            },
+            {
+                id: 9,
+                title: "Trabajo en el Hotel",
+                duration: "3:22",
+                price: "$0.99",
+                freeDownload: false,
+                hasInfo: false,
+                hasLyrics: false
+            },
+            {
+                id: 10,
+                title: "Amor Sin Papeles",
+                duration: "3:46",
+                price: "$0.99",
+                freeDownload: false,
+                hasInfo: true,
+                hasLyrics: false
+            },
+            {
+                id: 11,
+                title: "Si La Migra Viene",
+                duration: "3:25",
+                price: "$0.99",
+                freeDownload: false,
+                hasInfo: false,
+                hasLyrics: false
+            },
+            {
+                id: 12,
+                title: "Se Vende Todo",
+                duration: "6:48",
+                price: "$0.99",
+                freeDownload: false,
+                hasInfo: false,
+                hasLyrics: false
+            }
+        ]
+    }
+]
+
+export default function MusicSection() {
+    const { t, language } = useLanguage()
+    const [currentlyPlaying, setCurrentlyPlaying] = useState<number | null>(null)
+    const [expandedAlbum, setExpandedAlbum] = useState<string>("honor-migrante") // Default expanded album
+
+    // Mock function for playing a song
+    const handlePlaySong = (songId: number) => {
+        setCurrentlyPlaying(currentlyPlaying === songId ? null : songId)
+    }
+
+    // Mock function for buying a song
+    const handleBuySong = (song: Song) => {
+        alert(`Redirecting to purchase ${song.title} for ${song.price}`)
+        // In production, redirect to actual store or payment gateway
+        window.open("https://franciscoherreras-cota.bandcamp.com/", "_blank")
+    }
+
+    // Mock function for buying an album
+    const handleBuyAlbum = (album: Album) => {
+        alert(`Redirecting to purchase album ${album.title} for ${album.price}`)
+        // In production, redirect to actual store or payment gateway
+        window.open("https://franciscoherreras-cota.bandcamp.com/", "_blank")
+    }
+
+    return (
+        <div className="relative w-full bg-gradient-to-r from-purple-700 via-blue-600 to-purple-700 overflow-y-auto flex flex-col min-h-screen">
+            {/* Title for the Music Section */}
+            <div className="sticky top-0 pt-4 sm:pt-12 md:pt-16 pb-2 sm:pb-10 md:pb-12 z-30 bg-gradient-to-b from-purple-900/80 to-transparent">
+                <div className="container mx-auto text-center px-4">
+                    <div className="inline-block relative mb-1 sm:mb-2">
+                        <span className="text-red-500 text-3xl sm:text-4xl md:text-5xl absolute -left-4 sm:-left-6 md:-left-8 top-1/2 transform -translate-y-1/2">•</span>
+                        <h2 className="relative text-xl sm:text-3xl md:text-5xl font-black tracking-tighter uppercase">
+                            <span className="text-red-500 relative mr-1">
+                                F.<span className="absolute -inset-1 bg-red-500 blur-sm opacity-30 -z-10"></span>
+                            </span>
+                            <span className="text-white">HERRERA</span>
+                        </h2>
+                        <span className="text-red-500 text-3xl sm:text-4xl md:text-5xl absolute -right-4 sm:-right-6 md:-right-8 top-1/2 transform -translate-y-1/2">•</span>
+                    </div>
+                    <div className="h-1 bg-red-500 w-16 sm:w-24 md:w-48 mx-auto mt-1 sm:mt-3 md:mt-4 mb-1 sm:mb-2"></div>
+
+                    {/* Section title */}
+
+                    <h3 className="text-white text-3xl md:text-5xl uppercase tracking-tight font-black drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] mb-3">{t("latest.music")}</h3>
+                    {/* Subtitle with 3D styling */}
+                    <div className="relative mb-3 sm:mb-4 md:mb-5 mx-auto flex justify-center">
+                        <div className="bg-black/40 border-l-2 border-r-2 border-red-500 px-4 sm:px-6 md:px-8 py-2 rounded-md inline-block text-center shadow-lg relative">
+                            <div className="absolute inset-0 bg-red-500/5 rounded-md"></div>
+                            <p className="text-white text-sm sm:text-base md:text-xl font-bold uppercase tracking-wider leading-tight relative">
+                                <span className="text-red-500 mr-2 drop-shadow-md">•</span>
+                                <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
+                                    {language === 'en' ? 'Migration Strengthens The Nation' : 'La Migración Fortalece La Nación'}
+                                </span>
+                                <span className="text-red-500 ml-2 drop-shadow-md">•</span>
+                            </p>
+                            <p className="text-white/90 text-sm sm:text-base md:text-lg font-medium uppercase tracking-wide mt-1 relative drop-shadow-sm">
+                                {language === 'en' ? 'Music That Tells Our Stories' : 'Música Que Cuenta Nuestras Historias'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Main Content */}
+            <div className="flex-grow container mx-auto px-3 sm:px-6 py-4 sm:py-8">
+                {/* Album Display */}
+                {albums.map((album) => (
+                    <div key={album.id} className="bg-black/80 rounded-lg border border-white/10 shadow-lg mx-auto max-w-[95%] sm:max-w-[90%] xl:max-w-[80%] 2xl:max-w-[70%] mb-10 overflow-hidden">
+
+                        {/* Album Header */}
+                        <div className="p-4 sm:p-6 md:p-8">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {/* Album Cover */}
+                                <div className="relative aspect-square max-w-xs mx-auto md:mx-0 border-2 border-red-500/20 rounded-lg shadow-xl">
+                                    <Image
+                                        src={album.cover}
+                                        alt={album.title}
+                                        width={400}
+                                        height={400}
+                                        className="rounded-lg"
+                                        priority
+                                    />
+                                </div>
+
+                                {/* Album Info */}
+                                <div className="col-span-2 text-white">
+                                    <h2 className="text-3xl font-black tracking-tight mb-2">{album.title}</h2>
+                                    <h3 className="text-xl text-red-400 font-bold mb-4">{album.artist}</h3>
+
+                                    <div className="flex flex-wrap gap-3 mb-6">
+                                        <Button
+                                            onClick={() => handleBuyAlbum(album)}
+                                            className="bg-red-600 hover:bg-red-700 text-white font-bold rounded-md px-4 py-2 transition duration-300 ease-in-out shadow-lg flex items-center gap-2"
+                                        >
+                                            <Download size={18} /> {language === 'en' ? `Download: ${album.price}` : `Descargar: ${album.price}`}
+                                        </Button>
+
+                                        <Button
+                                            className="bg-transparent hover:bg-white/10 text-white border border-white/20 font-bold rounded-md px-4 py-2 transition duration-300 ease-in-out shadow-lg flex items-center gap-2"
+                                        >
+                                            <Share2 size={18} /> {language === 'en' ? 'Share' : 'Compartir'}
+                                        </Button>
+
+                                        <Button
+                                            className="bg-transparent hover:bg-white/10 text-white border border-white/20 font-bold rounded-md px-4 py-2 transition duration-300 ease-in-out shadow-lg flex items-center gap-2"
+                                        >
+                                            <Heart size={18} className="text-red-400" /> {language === 'en' ? 'Favorite' : 'Favorito'}
+                                        </Button>
+                                    </div>
+
+                                    <p className="text-gray-300 leading-relaxed mb-4">
+                                        {language === 'en' ? album.description.en : album.description.es}
+                                    </p>
+
+                                    <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
+                                        <div>
+                                            <span className="font-bold">12</span> {language === 'en' ? 'Songs' : 'Canciones'}
+                                        </div>
+                                        <div>
+                                            <span className="font-bold">45</span> {language === 'en' ? 'Minutes' : 'Minutos'}
+                                        </div>
+                                        <div className="flex items-center">
+                                            <span className="text-red-500">♫</span> {language === 'en' ? 'Released 2023' : 'Lanzado 2023'}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Divider */}
+                        <div className="h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent"></div>
+
+                        {/* Song List */}
+                        <div className="p-4 sm:p-6">
+                            <h3 className="text-white text-3xl md:text-5xl uppercase tracking-tight font-black drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] text-center mb-6">{t("latest.music")}</h3>
+
+                            <div className="bg-black/60 rounded-xl overflow-hidden transform perspective-1000 relative shadow-2xl shadow-red-900/30 border border-red-500/30 hover:border-red-500/50 transition-all duration-500 group hover:translate-y-[-3px] hover:shadow-red-900/40 backdrop-blur-sm">
+                                {/* 3D Effect Elements */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-red-900/10 via-transparent to-purple-900/10 opacity-50"></div>
+                                <div className="absolute -inset-1 bg-red-500/5 blur-lg opacity-30 group-hover:opacity-40 transition-opacity"></div>
+                                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent"></div>
+                                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent"></div>
+                                <div className="absolute top-0 bottom-0 left-0 w-px bg-gradient-to-b from-transparent via-red-500/30 to-transparent"></div>
+                                <div className="absolute top-0 bottom-0 right-0 w-px bg-gradient-to-b from-transparent via-red-500/30 to-transparent"></div>
+
+                                {/* Pseudo 3D lighting effect */}
+                                <div className="absolute inset-0 opacity-20 bg-gradient-to-b from-white/10 via-transparent to-black/20 pointer-events-none"></div>
+
+                                {/* Glow corners */}
+                                <div className="absolute top-0 left-0 w-10 h-10 bg-red-500/20 blur-md rounded-full -translate-x-1/2 -translate-y-1/2 opacity-60 pointer-events-none"></div>
+                                <div className="absolute bottom-0 right-0 w-10 h-10 bg-red-500/20 blur-md rounded-full translate-x-1/2 translate-y-1/2 opacity-60 pointer-events-none"></div>
+
+                                {/* Header row */}
+                                <div className="flex items-center justify-between px-6 py-5 bg-gradient-to-r from-black/80 via-red-950/30 to-black/80 border-b border-red-500/40 hidden sm:flex relative z-10 shadow-md">
+                                    <div className="flex items-center gap-6">
+                                        <div>
+                                            <span className="font-black text-xl uppercase text-white tracking-tight drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
+                                                {language === 'en' ? 'SONGS' : 'CANCIONES'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span className="font-black text-xl uppercase text-white tracking-tight drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
+                                            PRICE
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Songs list */}
+                                <div className="space-y-1 p-2 relative z-10">
+                                    {album.songs.map((song, index) => (
+                                        <div
+                                            key={song.id}
+                                            className={`group flex items-center justify-between px-3 py-2.5 rounded-md ${currentlyPlaying === song.id
+                                                ? 'bg-red-800/30 border border-red-500/40 shadow-lg shadow-red-900/20'
+                                                : index % 2 === 0
+                                                    ? 'bg-black/40 border border-transparent hover:bg-black/60 hover:border-red-900/30 hover:shadow-md hover:shadow-red-900/10'
+                                                    : 'border border-transparent hover:bg-black/60 hover:border-red-900/30 hover:shadow-md hover:shadow-red-900/10'
+                                                } transition-all duration-200`}
+                                        >
+                                            {/* Play/Number indicator */}
+                                            <div className="flex items-center gap-4 sm:gap-6">
+                                                <div className="w-8 flex items-center justify-center relative">
+                                                    <button
+                                                        onClick={() => handlePlaySong(song.id)}
+                                                        className={`text-white rounded-full flex items-center justify-center p-1 transition-all ${currentlyPlaying === song.id ? 'bg-red-600 shadow-md shadow-red-900/50' : 'bg-white/10 opacity-70 group-hover:opacity-100 hover:bg-red-600/50'}`}
+                                                    >
+                                                        {currentlyPlaying === song.id
+                                                            ? <Pause size={16} />
+                                                            : <Play size={16} className="ml-0.5" />}
+                                                    </button>
+                                                </div>
+
+                                                {/* Song info */}
+                                                <div className="flex-grow">
+                                                    <h4 className="text-white font-bold text-base sm:text-lg tracking-tighter flex items-center drop-shadow-sm">
+                                                        <span className="text-red-400 opacity-90 w-6 inline-block text-right mr-2">{song.id}.</span>
+                                                        <span>{song.title}</span>
+                                                    </h4>
+                                                    <div className="flex gap-2 items-center">
+                                                        <span className="text-gray-400 text-sm">{song.duration}</span>
+                                                        {song.hasInfo && (
+                                                            <span className="text-blue-400 text-xs border border-blue-400/30 px-1.5 py-0.5 rounded bg-blue-500/10">
+                                                                {language === 'en' ? 'Info' : 'Info'}
+                                                            </span>
+                                                        )}
+                                                        {song.hasLyrics && (
+                                                            <span className="text-green-400 text-xs border border-green-400/30 px-1.5 py-0.5 rounded bg-green-500/10">
+                                                                {language === 'en' ? 'Lyrics' : 'Letra'}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Divider line */}
+                                            <div className="hidden sm:block h-10 w-px bg-gradient-to-b from-transparent via-red-700/30 to-transparent mx-4"></div>
+
+                                            {/* Purchase options */}
+                                            <div className="flex flex-col items-end gap-1">
+                                                <div className="text-xs font-black uppercase tracking-tighter text-red-400 drop-shadow-sm">{language === 'en' ? 'Price' : 'Precio'}</div>
+                                                {song.freeDownload ? (
+                                                    <Button
+                                                        className="bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm font-bold rounded-md px-3 py-1 h-8 transition-all whitespace-nowrap shadow-lg shadow-green-900/20 hover:translate-y-[-1px] hover:shadow-green-900/30"
+                                                    >
+                                                        {language === 'en' ? 'Free' : 'Gratis'}
+                                                    </Button>
+                                                ) : (
+                                                    <Button
+                                                        onClick={() => handleBuySong(song)}
+                                                        className="bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-bold rounded-md px-3 py-1 h-8 transition-all whitespace-nowrap shadow-lg shadow-red-900/20 hover:translate-y-[-1px] hover:shadow-red-900/30"
+                                                    >
+                                                        {song.price}
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                        {/* Call-to-action */ }
+                    < div className = "p-6 bg-gradient-to-r from-red-500/20 via-purple-500/20 to-red-500/20 border-t border-white/10" >
+                    <div className="text-center">
+                        <p className="text-white mb-4">
+                            {language === 'en'
+                                ? 'Hear these songs and more at the upcoming concert!'
+                                : '¡Escucha estas canciones y más en el próximo concierto!'}
+                        </p>
+                        <Link href="/#reserve-tickets">
+                            <Button className="bg-red-600 hover:bg-red-700 text-white font-bold rounded-md px-6 py-3 transition duration-300 ease-in-out shadow-lg pulse-animation">
+                                {language === 'en' ? 'RESERVE TICKETS NOW' : 'RESERVAR BOLETOS AHORA'}
+                            </Button>
+                        </Link>
+                    </div>
+                        </div>
+        </div>
+    ))
+}
+
+{/* Additional Albums */ }
+<div className="text-center text-white my-6">
+    <h3 className="text-2xl font-bold mb-4">
+        {language === 'en' ? 'More Albums Coming Soon' : 'Más Álbumes Próximamente'}
+    </h3>
+    <p className="text-gray-300 max-w-2xl mx-auto">
+        {language === 'en'
+            ? 'Stay tuned for more music releases and updates. Visit the official Bandcamp page for the complete catalog.'
+            : 'Estén atentos a más lanzamientos y actualizaciones musicales. Visite la página oficial de Bandcamp para ver el catálogo completo.'}
+    </p>
+    <div className="mt-6">
+        <a
+            href="https://franciscoherreras-cota.bandcamp.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-[#1DA0C3] hover:bg-[#1a8fb0] text-white font-bold rounded-md px-6 py-3 transition duration-300 ease-in-out shadow-lg"
+        >
+            <ExternalLink size={18} />
+            {language === 'en' ? 'Visit Bandcamp Page' : 'Visitar Página de Bandcamp'}
+        </a>
+    </div>
+</div>
+            </div >
+
+    {/* Background Text - Desktop only */ }
+    < div className = "absolute inset-0 flex items-center overflow-hidden pointer-events-none hidden sm:flex" >
+        <h1 className="text-[8rem] md:text-[15rem] font-bold text-white/10 whitespace-nowrap animate-marquee">
+            MUSIC • FRANCISCO • MUSIC • FRANCISCO •
+        </h1>
+            </div >
+
+    {/* Styles */ }
+    < style jsx global > {`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        
+        .animate-marquee {
+          animation: marquee 30s linear infinite;
+        }
+      `}</style >
+        </div >
+    )
+} 
