@@ -1,9 +1,30 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* CRITICAL: Force banner down on mobile */
+@media (max-width: 767px) {
+  #__next > main > div.w-full.bg-black.py-8.overflow-hidden,
+  main > div.w-full.bg-black.py-8.overflow-hidden,
+  .banner-position-wrapper {
+    margin-top: 550px !important; /* Adjusted to move banner down without stretching */
+    transform: translateY(0) !important;
+    height: auto !important; /* Ensure height is determined by content */
+    max-height: 120px !important; /* Limit maximum height */
+  }
+
+  /* Ensure the banner content maintains its height */
+  #__next > main > div.w-full.bg-black.py-8.overflow-hidden > div,
+  main > div.w-full.bg-black.py-8.overflow-hidden > div,
+  .banner-position-wrapper > div {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: 120px !important; /* Limit maximum height */
+  }
 }
 
 @layer utilities {

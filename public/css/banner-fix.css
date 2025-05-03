@@ -1,0 +1,205 @@
+/* Emergency banner fix */
+.banner-container,
+[class*="banner-position-wrapper"],
+main > div.w-full.bg-black.py-8,
+#__next main > div.w-full.bg-black.py-8,
+div:has(.animate-smooth-banner) {
+  margin-top: 600px !important; /* Increased to move banner lower without stretching */
+  position: relative !important;
+  z-index: 999 !important;
+  height: auto !important; /* Ensure height is determined by content */
+  max-height: 120px !important; /* Limit maximum height */
+  transform: translateY(
+    0
+  ) !important; /* Prevent any transforms affecting position */
+}
+
+/* Ensure the banner content maintains its height */
+.banner-container > div,
+[class*="banner-position-wrapper"] > div,
+main > div.w-full.bg-black.py-8 > div,
+#__next main > div.w-full.bg-black.py-8 > div,
+div:has(.animate-smooth-banner) > div {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: 120px !important; /* Limit maximum height */
+  padding-top: 0.5rem !important; /* Reduce top padding */
+  padding-bottom: 0.5rem !important; /* Reduce bottom padding */
+}
+
+/* EXTREME MOBILE TITLE FIX - Force mobile title to display correctly */
+@media screen and (max-width: 640px) {
+  /* Mobile title fix - HIGH PRIORITY */
+  h1.title-3d,
+  .title-3d {
+    font-size: 0.85rem !important;
+    line-height: 0.9 !important;
+    white-space: nowrap !important;
+    letter-spacing: -0.5px !important;
+    transform: scale(0.85) !important;
+    width: auto !important;
+    max-width: 100% !important;
+  }
+
+  /* Fix the FRANCISCO HERRERA text within the h1 */
+  .title-3d span.text-red-500 {
+    font-size: 0.85rem !important;
+  }
+
+  /* Target the specific container that holds the title elements */
+  header div.flex.items-center.justify-center.mb-2.w-full {
+    transform: scale(0.8) !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Make decorative dots extremely small but visible */
+  .text-red-500.text-3xl,
+  .text-red-500.text-4xl,
+  .decorative-dot {
+    display: inline-block !important;
+    font-size: 0.5rem !important;
+    margin: 0 0.05rem !important;
+    opacity: 1 !important;
+    padding: 0 !important;
+    min-width: 0 !important;
+    width: auto !important;
+  }
+
+  /* Make decorative lines extremely thin */
+  div.h-\[5px\],
+  div.h-\[7px\],
+  .decorative-line {
+    display: inline-block !important;
+    min-width: 0.15rem !important;
+    width: 0.15rem !important;
+    max-width: 0.15rem !important;
+    height: 2px !important;
+    opacity: 1 !important;
+    margin: 0 0.05rem !important;
+    padding: 0 !important;
+  }
+
+  /* Reduce header top padding */
+  header.absolute.top-0 {
+    padding-top: 0.25rem !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Fix container padding */
+  header .container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    max-width: 100% !important;
+    width: 100vw !important;
+  }
+}
+
+/* Mobile-specific styles to keep title and decorative elements */
+@media (max-width: 767px) {
+  /* Title and decorative elements */
+  h1.title-3d,
+  .title-3d {
+    font-size: 1.3rem !important;
+    line-height: 1.1 !important;
+    white-space: normal !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+    transform: scale(0.9) !important;
+    width: auto !important;
+    max-width: 100% !important;
+  }
+
+  /* Fix FRANCISCO HERRERA spacing */
+  .title-3d span.text-red-500 {
+    margin-right: 4px !important;
+    font-size: 1.3rem !important;
+  }
+
+  /* Reduce header top padding to keep everything visible */
+  header.absolute.top-0.left-0.right-0.z-10 {
+    padding-top: 0.5rem !important;
+  }
+
+  /* Keep decorative dots visible on mobile */
+  .text-red-500.text-3xl,
+  .text-red-500.text-4xl,
+  .decorative-dot {
+    display: inline-block !important;
+    visibility: visible !important;
+    font-size: 1.2rem !important;
+    margin: 0 0.15rem !important;
+    opacity: 1 !important;
+  }
+
+  /* Ensure decorative line is visible but smaller */
+  .h-\[5px\],
+  .h-\[3px\],
+  .decorative-line {
+    display: block !important;
+    visibility: visible !important;
+    min-width: 0.5rem !important;
+    width: 0.5rem !important;
+    max-width: 0.5rem !important;
+    height: 2px !important;
+    opacity: 1 !important;
+  }
+
+  /* Title with dots structure */
+  .flex.items-center.justify-center {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 1px !important;
+    overflow-x: visible !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    transform: scale(0.85) !important;
+  }
+
+  /* Fix overflow issues that may cut off elements */
+  .container.mx-auto.flex.flex-col.items-center.justify-center.text-center {
+    overflow-x: visible !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+}
+
+/* Add specific positioning for tablet and larger screens */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .banner-container,
+  [class*="banner-position-wrapper"],
+  main > div.w-full.bg-black.py-8,
+  #__next main > div.w-full.bg-black.py-8,
+  div:has(.animate-smooth-banner) {
+    margin-top: 40px !important; /* Add some space for medium screens */
+  }
+}
+
+/* Reset for desktop */
+@media (min-width: 1024px) {
+  .banner-container,
+  [class*="banner-position-wrapper"],
+  div:has(.animate-smooth-banner) {
+    margin-top: 25px !important; /* Slight adjustment for desktop */
+    max-height: none !important; /* Allow natural height on desktop */
+  }
+
+  /* Maintain consistent height on desktop */
+  .banner-container > div,
+  [class*="banner-position-wrapper"] > div,
+  main > div.w-full.bg-black.py-8 > div,
+  #__next main > div.w-full.bg-black.py-8 > div,
+  div:has(.animate-smooth-banner) > div {
+    max-height: none !important; /* Allow natural height */
+  }
+}

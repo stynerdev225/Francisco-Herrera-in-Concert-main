@@ -98,37 +98,37 @@ export default function Contact() {
             </div>
 
             {/* Contact Info */}
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 shadow-xl">
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 md:p-8 shadow-xl">
               <h3 className="text-xl font-semibold mb-6 text-white">Contact Information</h3>
 
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <div className="mt-1">
+                  <div className="mt-1 flex-shrink-0">
                     <MapPin className="w-5 h-5 text-red-400" />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <h4 className="font-medium text-white">Location</h4>
-                    <p className="text-white/80">San Francisco, CA</p>
+                    <p className="text-white/80 break-words">401 Van Ness Ave, San Francisco, CA 94102</p>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="mt-1">
+                  <div className="mt-1 flex-shrink-0">
                     <Mail className="w-5 h-5 text-red-400" />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <h4 className="font-medium text-white">Email</h4>
-                    <p className="text-white/80">Franciscoherrera001@gmail.com</p>
+                    <p className="text-white/80 break-words">miranomas@franciscoherreramusic.com</p>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="mt-1">
+                  <div className="mt-1 flex-shrink-0">
                     <Phone className="w-5 h-5 text-red-400" />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <h4 className="font-medium text-white">Phone</h4>
-                    <p className="text-white/80">Coming Soon</p>
+                    <p className="text-white/80">415 571 7589</p>
                   </div>
                 </div>
               </div>

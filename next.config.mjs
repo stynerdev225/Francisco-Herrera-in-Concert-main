@@ -35,7 +35,7 @@ const baseConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https://script.google.com https://*.googleapis.com; img-src 'self' data: https://* blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src https://script.google.com; form-action https://script.google.com; base-uri 'self'; frame-ancestors 'self'; child-src https://script.google.com;"
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https://script.google.com https://*.googleapis.com; img-src 'self' data: https://* blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src https://script.google.com; form-action https://script.google.com; base-uri 'self'; frame-ancestors 'self'; child-src 'self' blob: https://script.google.com; worker-src 'self' blob:;"
           }
         ]
       }

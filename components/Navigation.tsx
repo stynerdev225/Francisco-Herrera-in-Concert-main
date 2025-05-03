@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, use } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
@@ -9,30 +9,33 @@ import LanguageToggle from './LanguageToggle';
 
 // Navigation items with translations
 const navItems = [
-    { key: "home", href: "/", translationKey: "nav.home" },
-    { key: "music", href: "/sections/music", translationKey: "nav.music" },
-    { key: "contact", href: "/contact", translationKey: "nav.contact" },
+    { key: "home", href: "/", translationKey: "home" },
+    // Buy tickets item is now handled separately with special styling
+    { key: "music", href: "/sections/music", translationKey: "music" },
 ];
 
-// Add translations to use in this component
 const navTranslations = {
-    "nav.home": {
+    "home": {
         en: "Home",
         es: "Inicio",
     },
-    "nav.about": {
+    "about": {
         en: "About",
         es: "Sobre",
     },
-    "nav.music": {
+    "music": {
         en: "Music",
         es: "Música",
     },
-    "nav.events": {
+    "events": {
         en: "Events",
         es: "Eventos",
     },
-    "nav.contact": {
+    "buy tickets": {
+        en: "Buy Tickets",
+        es: "Comprar Boletos",
+    },
+    "contact": {
         en: "Contact",
         es: "Contacto",
     },
@@ -50,42 +53,116 @@ export default function Navigation() {
     const [menuOpen, setMenuOpen] = useState(false);
     const { t, language } = useLanguage();
     const pathname = usePathname();
+    const [activeTab, setActiveTab] = useState<string | null>(null);
+    const menuButtonRef = useRef<HTMLButtonElement>(null);
+    const [touchFeedback, setTouchFeedback] = useState<string | null>(null);
+    const [isNavigating, setIsNavigating] = useState(false);
+    const hasInitialized = useRef(false);
 
-    // Use shared music context instead of local state
-    const { isPlaying, toggleMusic, currentSong } = useMusic();
+    const { isPlaying, toggleMusic, currentSong, initializeAudio, songTitle } = useMusic();
 
-    // Get song title from the filename
-    const getSongTitle = (songPath: string) => {
-        if (!songPath) return 'Music';
-
-        if (songPath.includes('nuevo-sol-snippet1')) {
-            return 'Nuevo Sol (Part 1)';
-        } else if (songPath.includes('nuevo-sol-snippet2')) {
-            return 'Nuevo Sol (Part 2)';
-        } else if (songPath.includes('saber-migra-snippet1')) {
-            return 'Saber Migra (Part 1)';
-        } else if (songPath.includes('saber-migra-snippet2')) {
-            return 'Saber Migra (Part 2)';
+    useEffect(() => {
+        // Initialize the active tab based on the current pathname when component mounts
+        if (pathname !== '/') {
+            setActiveTab(pathname);
         }
 
-        return 'Music';
+        // Initialize audio only once when component mounts
+        if (!hasInitialized.current) {
+            initializeAudio();
+            hasInitialized.current = true;
+        }
+    }, [pathname, initializeAudio]);
+
+    // Enhanced toggle menu with debounce protection to prevent double-tap issues
+    const toggleMenu = () => {
+        if (isNavigating) return; // Prevent toggle during navigation
+
+        setMenuOpen(prevState => !prevState);
+
+        // Add haptic feedback for better mobile experience
+        if (navigator.vibrate) {
+            navigator.vibrate(50);
+        }
+
+        console.log("Menu toggled, new state:", !menuOpen);
     };
 
-    // Song title to display
-    const songTitle = getSongTitle(currentSong);
+    // Add event listener to close menu when clicking outside with improved touch detection
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+            if (menuButtonRef.current &&
+                !menuButtonRef.current.contains(event.target as Node) &&
+                menuOpen) {
+                setMenuOpen(false);
+            }
+        };
 
-    const toggleMenu = () => {
-        setMenuOpen(!menuOpen);
+        // Use both touch and mouse events for better cross-device compatibility
+        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('touchstart', handleClickOutside, { passive: true });
+        document.addEventListener('touchend', handleClickOutside, { passive: true });
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('touchstart', handleClickOutside);
+            document.removeEventListener('touchend', handleClickOutside);
+        };
+    }, [menuOpen]);
+
+    const handleTabClick = (path: string) => {
+        setActiveTab(path);
+    };
+
+    const handleLogoClick = () => {
+        setActiveTab(null);
+    };
+
+    const handleLinkClick = () => {
+        // Close menu when any link is clicked
+        setMenuOpen(false);
+
+        // Add haptic feedback for better mobile experience
+        if (navigator.vibrate) {
+            navigator.vibrate(50);
+        }
+    };
+
+    // Enhanced navigation function with touch feedback and navigation protection
+    const navigateTo = (path: string) => {
+        if (isNavigating) return; // Prevent multiple rapid taps from causing navigation issues
+
+        setIsNavigating(true); // Set navigating flag to prevent double-navigation
+        setTouchFeedback(path); // Set visual feedback
+        handleLinkClick();
+        handleTabClick(path);
+
+        // Add haptic feedback for better mobile experience
+        if (navigator.vibrate) {
+            navigator.vibrate([50, 30, 50]); // Pattern for navigation feedback
+        }
+
+        // Use timeout to ensure visual feedback is shown before navigation
+        setTimeout(() => {
+            window.location.href = path;
+            setTouchFeedback(null); // Reset feedback state
+
+            // Reset navigation flag after a longer timeout to prevent rapid tapping issues
+            setTimeout(() => {
+                setIsNavigating(false);
+            }, 500);
+        }, 100);
     };
 
     return (
-        <nav className="bg-black text-white sticky top-0 z-50 w-full shadow-xl border-b border-red-500/30">
-            <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
-                <div className="flex items-center justify-between h-20 sm:h-28 py-3 sm:py-6">
-                    {/* Logo and site title with 3D effect */}
+        <nav className="bg-black text-white sticky top-0 z-50 w-full shadow-xl border-b border-red-500/30 hidden md:block">
+            {/* Main navbar will now be hidden on mobile (md:block) */}
+            <div className="max-w-7xl mx-auto px-2 sm:px-8 lg:px-10">
+                <div className="flex items-center justify-between h-20 sm:h-28 py-2 sm:py-6">
+                    {/* Logo section - made smaller on mobile */}
                     <div className="flex-shrink-0 flex items-center">
-                        <Link href="/" className="flex items-center space-x-3 sm:space-x-4 group">
-                            <span className="text-red-500 text-2xl sm:text-3xl font-bold bg-black/40 rounded-full w-10 h-10 sm:w-14 sm:h-14 flex items-center justify-center transform group-hover:scale-110 transition-transform shadow-lg shadow-red-500/20 border border-red-500/30 relative before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-br before:from-red-400 before:to-red-600 before:opacity-30 before:blur-sm">
+                        <Link href="/" className="flex items-center space-x-2 sm:space-x-4 group" onClick={handleLogoClick}>
+                            <span className="text-red-500 text-xl sm:text-3xl font-bold bg-black/40 rounded-full w-8 h-8 sm:w-14 sm:h-14 flex items-center justify-center transform group-hover:scale-110 transition-transform shadow-lg shadow-red-500/20 border border-red-500/30 relative before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-br before:from-red-400 before:to-red-600 before:opacity-30 before:blur-sm">
                                 <span className="relative z-10 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">♫</span>
                             </span>
                             <div className="hidden md:flex flex-col items-start">
@@ -102,9 +179,8 @@ export default function Navigation() {
                                     {t("nav.concert")}
                                 </span>
                             </div>
-                            {/* Mobile only mini title */}
                             <div className="flex md:hidden flex-col">
-                                <span className="font-black text-lg leading-none">
+                                <span className="font-black text-sm sm:text-lg leading-none">
                                     <span className="text-red-500">F.</span>
                                     <span className="text-white">HERRERA</span>
                                 </span>
@@ -112,21 +188,47 @@ export default function Navigation() {
                         </Link>
                     </div>
 
-                    {/* Desktop navigation with 3D tabs */}
+                    {/* Desktop navigation - keep unchanged */}
                     <div className="hidden md:block">
                         <div className="ml-10 flex items-center space-x-5">
                             {navItems.map((item) => (
                                 <Link
                                     key={item.key}
                                     href={item.href}
-                                    className={`px-6 py-3.5 rounded-xl text-base font-bold uppercase tracking-wide transition-all duration-300 transform hover:-translate-y-1 ${pathname === item.href
+                                    className={`px-6 py-3.5 rounded-xl text-base font-bold uppercase tracking-wide transition-all duration-300 transform hover:-translate-y-1 ${(activeTab === item.href)
                                         ? "bg-gradient-to-r from-red-600 to-red-500 text-white shadow-[0_5px_0_rgb(127,29,29)] hover:shadow-[0_3px_0_rgb(127,29,29)] active:shadow-none active:translate-y-1"
                                         : "text-gray-200 hover:bg-white/5 hover:text-white shadow-[0_3px_0_rgba(255,255,255,0.1)] hover:shadow-[0_5px_0_rgba(255,255,255,0.05)]"
                                         }`}
+                                    onClick={() => handleTabClick(item.href)}
                                 >
                                     <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">{t(item.translationKey)}</span>
                                 </Link>
                             ))}
+                            <Link
+                                key="buy tickets"
+                                href="/tickets"
+                                className="nav-tickets-button px-6 py-3.5 rounded-xl text-base font-bold uppercase tracking-wide transition-all duration-300 bg-gradient-to-r from-red-500 to-red-600 text-white cursor-pointer"
+                                style={{
+                                    touchAction: 'manipulation',
+                                    WebkitTapHighlightColor: 'transparent',
+                                    whiteSpace: 'nowrap',
+                                    minWidth: language === 'es' ? '210px' : '160px'
+                                }}
+                                onClick={() => handleTabClick("/tickets")}
+                            >
+                                <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">{t("buy tickets")}</span>
+                            </Link>
+                            <Link
+                                key="contact"
+                                href="/contact"
+                                className={`px-6 py-3.5 rounded-xl text-base font-bold uppercase tracking-wide transition-all duration-300 transform hover:-translate-y-1 ${(activeTab === "/contact")
+                                    ? "bg-gradient-to-r from-red-600 to-red-500 text-white shadow-[0_5px_0_rgb(127,29,29)] hover:shadow-[0_3px_0_rgb(127,29,29)] active:shadow-none active:translate-y-1"
+                                    : "text-gray-200 hover:bg-white/5 hover:text-white shadow-[0_3px_0_rgba(255,255,255,0.1)] hover:shadow-[0_5px_0_rgba(255,255,255,0.05)]"
+                                    }`}
+                                onClick={() => handleTabClick("/contact")}
+                            >
+                                <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">{t("contact")}</span>
+                            </Link>
                             <div className="ml-4">
                                 <LanguageToggle
                                     variant="pill"
@@ -134,50 +236,12 @@ export default function Navigation() {
                                 />
                             </div>
 
-                            {/* Music player button - explicitly updated to match BackgroundMusic exactly */}
-                            <button
-                                onClick={toggleMusic}
-                                className="w-10 h-10 rounded-full flex items-center justify-center bg-red-600 hover:bg-red-700 transition-colors overflow-hidden relative ml-3 group"
-                                aria-label={isPlaying ? `Pause ${songTitle}` : `Play ${songTitle}`}
-                                title={isPlaying ? `Pause ${songTitle}` : `Play ${songTitle}`}
-                            >
-                                {isPlaying && (
-                                    <div className="absolute -top-10 right-0 whitespace-nowrap rounded bg-black/80 px-2 py-1 text-xs font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                                        {songTitle}
-                                    </div>
-                                )}
-                                {isPlaying ? (
-                                    <div className="flex justify-center items-center w-full">
-                                        {/* Audio wave animation when playing */}
-                                        <div className="flex items-end h-5 space-x-0.5">
-                                            <div className="w-1 bg-white sound-wave-1 rounded-full"></div>
-                                            <div className="w-1 bg-white sound-wave-2 rounded-full"></div>
-                                            <div className="w-1 bg-white sound-wave-3 rounded-full"></div>
-                                            <div className="w-1 bg-white sound-wave-4 rounded-full"></div>
-                                            <div className="w-1 bg-white sound-wave-5 rounded-full"></div>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                                )}
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Mobile menu button with 3D effect and language toggle */}
-                    <div className="md:hidden flex items-center">
-                        <div className="flex items-center gap-3">
-                            <LanguageToggle
-                                variant="pill"
-                                className="bg-black/30 py-1.5 px-3 shadow-inner shadow-black/50 border border-red-500/20 text-sm"
-                            />
-
-                            {/* Mobile music player button - updated to match BackgroundMusic exactly */}
                             <button
                                 onClick={toggleMusic}
                                 className="w-10 h-10 rounded-full flex items-center justify-center bg-red-600 hover:bg-red-700 transition-colors overflow-hidden relative group"
                                 aria-label={isPlaying ? `Pause ${songTitle}` : `Play ${songTitle}`}
                                 title={isPlaying ? `Pause ${songTitle}` : `Play ${songTitle}`}
+                                style={{ touchAction: 'manipulation' }}
                             >
                                 {isPlaying && (
                                     <div className="absolute -top-10 right-0 whitespace-nowrap rounded bg-black/80 px-2 py-1 text-xs font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity">
@@ -186,101 +250,22 @@ export default function Navigation() {
                                 )}
                                 {isPlaying ? (
                                     <div className="flex justify-center items-center w-full">
-                                        {/* Audio wave animation when playing */}
                                         <div className="flex items-end h-5 space-x-0.5">
-                                            <div className="w-1 bg-white sound-wave-1 rounded-full"></div>
-                                            <div className="w-1 bg-white sound-wave-2 rounded-full"></div>
-                                            <div className="w-1 bg-white sound-wave-3 rounded-full"></div>
-                                            <div className="w-1 bg-white sound-wave-4 rounded-full"></div>
-                                            <div className="w-1 bg-white sound-wave-5 rounded-full"></div>
+                                            <div className="w-1 bg-white h-2 sound-wave-1 rounded-full animate-sound-wave"></div>
+                                            <div className="w-1 bg-white h-4 sound-wave-2 rounded-full animate-sound-wave animation-delay-100"></div>
+                                            <div className="w-1 bg-white h-3 sound-wave-3 rounded-full animate-sound-wave animation-delay-200"></div>
+                                            <div className="w-1 bg-white h-5 sound-wave-4 rounded-full animate-sound-wave animation-delay-300"></div>
+                                            <div className="w-1 bg-white h-2 sound-wave-5 rounded-full animate-sound-wave animation-delay-400"></div>
                                         </div>
                                     </div>
                                 ) : (
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                                 )}
                             </button>
-
-                            <button
-                                onClick={toggleMenu}
-                                className="inline-flex items-center justify-center p-2 rounded-full bg-gradient-to-br from-red-600 to-red-700 text-white shadow-[0_3px_0_rgb(127,29,29)] hover:shadow-[0_2px_0_rgb(127,29,29)] active:shadow-none active:translate-y-1 transform transition-all"
-                                aria-expanded={menuOpen}
-                                aria-label={t("nav.toggleMenu")}
-                            >
-                                <svg
-                                    className={`${menuOpen ? "hidden" : "block"} h-6 w-6 drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]`}
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                </svg>
-                                <svg
-                                    className={`${menuOpen ? "block" : "hidden"} h-6 w-6 drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]`}
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-
-            {/* Mobile menu with 3D effect - Compact floating design */}
-            <div
-                className={`${menuOpen ? "translate-y-0 opacity-100 pointer-events-auto" : "translate-y-[-20px] opacity-0 pointer-events-none"} md:hidden fixed right-4 top-[80px] z-50 w-[200px] transition-all duration-300 ease-in-out shadow-xl rounded-xl overflow-hidden`}
-            >
-                <div className="bg-black border border-red-500/20 rounded-xl">
-                    <div className="px-2 py-3 space-y-1.5">
-                        {navItems.map((item) => (
-                            <a
-                                key={item.key}
-                                href={item.href}
-                                className={`block px-4 py-2.5 rounded-lg text-sm font-bold uppercase tracking-wide transform hover:-translate-y-0.5 transition-all ${pathname === item.href
-                                    ? "bg-gradient-to-r from-red-600 to-red-500 text-white shadow-[0_3px_0_rgb(127,29,29)] hover:shadow-[0_2px_0_rgb(127,29,29)] active:shadow-none active:translate-y-0.5"
-                                    : "text-gray-200 hover:bg-white/5 hover:text-white"
-                                    }`}
-                                onClick={() => {
-                                    // Simply close the menu, the native <a> tag will handle navigation
-                                    setMenuOpen(false);
-                                    console.log(`Native navigation to: ${item.href}`);
-                                }}
-                                // Improve touch behavior
-                                style={{ touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' }}
-                            >
-                                <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)] block py-1">{t(item.translationKey)}</span>
-                            </a>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Optional dropdown arrow for visual effect */}
-                <div className="absolute top-[-8px] right-5 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[8px] border-b-black"></div>
-            </div>
-
-            {/* Backdrop for mobile menu */}
-            {menuOpen && (
-                <div
-                    className="fixed inset-0 bg-black/10 backdrop-blur-sm z-40 md:hidden"
-                    onClick={() => setMenuOpen(false)}
-                ></div>
-            )}
         </nav>
     );
 }

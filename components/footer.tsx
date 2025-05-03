@@ -15,7 +15,8 @@ export default function Footer() {
               <span className="text-red-500 mr-2 text-xl md:text-2xl">•</span>
               Find me
             </h3>
-            <p className="text-gray-300 text-sm md:text-base">San Francisco, CA</p>
+            <p className="text-gray-300 text-sm md:text-base">P.O. BOX 411723</p>
+            <p className="text-gray-300 text-sm md:text-base">SAN FRANCISCO, CA 94141</p>
           </div>
 
           {/* Contact me - centered */}
@@ -25,7 +26,7 @@ export default function Footer() {
               Contact me
             </h3>
             <div className="space-y-1 md:space-y-2">
-              <p className="text-gray-300 text-sm md:text-base">info@franciscoherrera.com</p>
+              <p className="text-gray-300 text-sm md:text-base">miranomas@franciscoherreramusic.com</p>
             </div>
           </div>
 
@@ -36,16 +37,28 @@ export default function Footer() {
               Follow me
             </h3>
             <div className="flex space-x-4 justify-center">
-              <Link href="#" className="text-gray-300 hover:text-red-500 p-2">
+              <Link href="https://www.facebook.com/franciscoherreramusic" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-red-500 p-2">
                 <Facebook size={20} />
               </Link>
-              <Link href="#" className="text-gray-300 hover:text-red-500 p-2">
-                <Youtube size={20} />
-              </Link>
-              <Link href="#" className="text-gray-300 hover:text-red-500 p-2">
+              <Link href="https://www.instagram.com/franciscoherreramusica/?hl=en" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-red-500 p-2">
                 <Instagram size={20} />
               </Link>
-              <Link href="#" className="text-gray-300 hover:text-red-500 p-2">
+              <Link href="https://www.tiktok.com/foryou?lang=en" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-red-500 p-2">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="text-gray-300"
+                  style={{ fill: 'currentColor' }}
+                >
+                  <path
+                    d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.9 2.9 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"
+                  />
+                </svg>
+              </Link>
+              <Link href="https://www.linkedin.com/in/francisco-javier-herrera-37168416/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-red-500 p-2">
                 <Linkedin size={20} />
               </Link>
             </div>
@@ -70,12 +83,12 @@ export default function Footer() {
 
                 <p className="text-gray-300 text-sm md:text-base flex items-center justify-center md:justify-start">
                   <Clock size={14} className="text-red-500 mr-2 flex-shrink-0" />
-                  <span className="flex items-center">• 7:00 PM – 9:00 PM</span>
+                  <span className="flex items-center">7:00 PM</span>
                 </p>
 
                 <p className="text-gray-300 text-sm md:text-base flex items-center justify-center md:justify-start">
                   <MapPin size={14} className="text-red-500 mr-2 flex-shrink-0" />
-                  San Francisco, CA
+                  Herbst Theatre
                 </p>
               </div>
 

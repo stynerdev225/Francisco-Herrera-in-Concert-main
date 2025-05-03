@@ -30,28 +30,24 @@ export default function HeroSection() {
   const lastScrollAttemptRef = useRef<number>(0);
   const isScrollingRef = useRef<boolean>(false);
 
-  // --- Functions (Unchanged from your version) ---
+  // --- Functions - COMPLETELY DISABLING ALL AUTO-SCROLL ---
   const scrollToElement = (elementId: string) => {
-    if (typeof window === 'undefined') return; const element = document.getElementById(elementId);
-    if (element) { const rect = element.getBoundingClientRect(); const scrollTop = window.pageYOffset || document.documentElement.scrollTop; const targetPosition = rect.top + scrollTop; window.scrollTo({ top: targetPosition, behavior: "smooth", }) }
+    // Disabled
+    return;
   }
   const throttledScrollToTickets = (event?: React.MouseEvent) => {
-    const now = Date.now(); if (isScrollingRef.current) { console.log("Scroll in progress - ignoring duplicate scroll request"); return; }
-    if (now - lastScrollAttemptRef.current > 2000) { lastScrollAttemptRef.current = now; isScrollingRef.current = true; scrollToTickets(event); setTimeout(() => { isScrollingRef.current = false; }, 2500); } else { console.log("Scroll throttled - ignoring duplicate scroll request within 2 seconds"); }
+    // Disabled
+    return;
   };
   const scrollToTickets = (event?: React.MouseEvent) => {
-    if (typeof window !== 'undefined') { const heroSection = document.getElementById('reserve-tickets'); if (heroSection) { const rect = heroSection.getBoundingClientRect(); if (rect.top >= -100 && rect.top <= 150) { console.log("Already at tickets section - ignoring scroll request"); return; } } }
-    if (event) { event.preventDefault(); } console.log("GUARANTEED SCROLL TO TICKETS SECTION"); if (typeof window === 'undefined') return;
-    setTimeout(() => {
-      const heroSection = document.getElementById('reserve-tickets'); if (!heroSection) { console.log("WARNING: Could not find #reserve-tickets section"); window.scrollTo({ top: window.innerHeight, behavior: 'smooth' }); setTimeout(() => { window.location.hash = 'reserve-tickets'; }, 100); return; }
-      console.log("FOUND HERO SECTION, USING DIRECT APPROACH"); const rect = heroSection.getBoundingClientRect(); const scrollTop = window.pageYOffset || document.documentElement.scrollTop; const absoluteY = rect.top + scrollTop; window.scroll({ top: absoluteY - 50, behavior: 'smooth' }); setTimeout(() => { history.pushState(null, '', '#reserve-tickets'); }, 100); heroSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      const shouldFocusInput = event && ((event as any)?.ticketButton === true || (event.target as HTMLElement)?.textContent?.toLowerCase().includes('ticket') || (event.target as HTMLElement)?.closest('[href="#reserve-tickets"]') !== null);
-      if (shouldFocusInput) { setTimeout(() => { const formInput = heroSection.querySelector('input'); if (formInput) { formInput.focus({ preventScroll: true }); formInput.style.backgroundColor = 'rgba(255, 0, 0, 0.1)'; setTimeout(() => { formInput.style.backgroundColor = ''; }, 1000); } }, 800); }
-      setTimeout(() => { const originalBg = heroSection.style.backgroundColor || ''; heroSection.style.backgroundColor = 'rgba(255, 0, 0, 0.1)'; setTimeout(() => { heroSection.style.backgroundColor = originalBg; }, 500); }, 800);
-    }, 100);
+    // Disabled
+    return;
   };
   const scrollToTop = () => { if (typeof window === 'undefined') return; window.scrollTo({ top: 0, behavior: "smooth", }); setTimeout(() => { history.pushState(null, '', window.location.pathname); }, 800); }
-  const scrollToContent = () => { if (typeof window === 'undefined') return; scrollToElement("reserve-tickets") }
+  const scrollToContent = () => {
+    // Disabled
+    return;
+  }
 
   // --- useEffects (Unchanged from your version, except the last one) ---
   useEffect(() => { // scroll/hash/anchor listener
@@ -128,60 +124,58 @@ export default function HeroSection() {
       }
     }
   }, []);
-  useEffect(() => { // Link Click Interception (Unchanged)
-    if (typeof window === 'undefined') return; const handleLinkClick = (e: MouseEvent) => { const target = e.target as HTMLElement; let currentElement: HTMLElement | null = target; while (currentElement) { if (currentElement.tagName === 'A') { const href = currentElement.getAttribute('href'); console.log("LINK CLICKED:", href); if (href && (href.startsWith('#') || href.includes('ticket') || href.includes('reserve') || href.includes('boleto'))) { console.log("INTERCEPTING LINK CLICK:", href); e.preventDefault(); e.stopPropagation(); document.body.classList.add('smooth-scrolling'); if (href === '#reserve-tickets' || href.includes('ticket') || href.includes('reserve')) { throttledScrollToTickets(e as unknown as React.MouseEvent); } else { const targetId = href.startsWith('#') ? href.substring(1) : href; history.pushState(null, '', `#${targetId}`); const targetElement = document.getElementById(targetId); if (targetElement) { targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' }); } } setTimeout(() => { document.body.classList.remove('smooth-scrolling'); }, 1000); return; } } currentElement = currentElement.parentElement; } }; document.addEventListener('click', handleLinkClick, true); return () => { document.removeEventListener('click', handleLinkClick, true); };
-  }, []);
+  useEffect(() => { // Link Click Interception (Modified to disable auto-scroll)
+    if (typeof window === 'undefined') return;
 
-  // --- *** useEffect with the PROBLEMATIC Non-Link Click Handler - NOW FIXED *** ---
+    const handleLinkClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      let currentElement: HTMLElement | null = target;
+
+      while (currentElement) {
+        if (currentElement.tagName === 'A') {
+          const href = currentElement.getAttribute('href');
+          console.log("LINK CLICKED:", href);
+
+          if (href && (href.startsWith('#') || href.includes('ticket') || href.includes('reserve') || href.includes('boleto'))) {
+            console.log("Auto-scroll has been disabled");
+            // Prevent default behavior for ticket/reserve links
+            if (href === '#reserve-tickets' || href.includes('ticket') || href.includes('reserve')) {
+              e.preventDefault();
+              e.stopPropagation();
+              return;
+            }
+
+            // Handle other anchor links normally
+            if (href.startsWith('#')) {
+              e.preventDefault();
+              e.stopPropagation();
+
+              const targetId = href.substring(1);
+              history.pushState(null, '', `#${targetId}`);
+
+              const targetElement = document.getElementById(targetId);
+              if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }
+            return;
+          }
+        }
+
+        currentElement = currentElement.parentElement;
+      }
+    };
+
+    document.addEventListener('click', handleLinkClick, true);
+    return () => { document.removeEventListener('click', handleLinkClick, true); };
+  }, []);
   useEffect(() => {
     if (typeof window === 'undefined') return; // Client-side only
 
     const handleNonLinkClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-
-      // **** THE ONLY CHANGE IS HERE: Check if click is inside form area ****
-      if (target.closest('#reserve-tickets')) {
-        // If the click originated within the hero section form area,
-        // THIS listener should ignore it completely and let hero-section handle it.
-        console.log("HeroSection non-link listener: Click inside #reserve-tickets - IGNORING.");
-        return; // <<<< EXIT EARLY, DO NOT STOP PROPAGATION or preventDefault
-      }
-      // **** END OF FIX ****
-
-      // ----- Logic below ONLY runs for clicks OUTSIDE the form area -----
-
-      // Skip links (handled by handleAnchorClick/handleLinkClick) and form inputs
-      if (target.tagName === 'A' || target.closest('a') || target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.closest('input') || target.closest('textarea')) {
-        return;
-      }
-
-      // Check buttons/divs/spans *outside* the form for ticket-related text/classes
-      let currentElement: HTMLElement | null = target;
-      while (currentElement) {
-        // Only check relevant tags
-        if (currentElement.tagName === 'BUTTON' || currentElement.tagName === 'SPAN' || currentElement.tagName === 'DIV') {
-          const elementText = currentElement.textContent?.toLowerCase() || '';
-          const classList = Array.from(currentElement.classList);
-          const ticketClass = classList.find(cn => cn.includes('ticket') || cn.includes('reserve') || cn.includes('boleto'));
-
-          // If it looks like a scroll trigger *and is outside the form*
-          if (ticketClass || elementText.includes('ticket') || elementText.includes('boleto') || elementText.includes('reserve')) {
-            // Check it's not one of the specific buttons handled by their own onClick if necessary
-            if (scrollButtonsRef.current.includes(currentElement as HTMLButtonElement)) return; // Let specific onClick handle
-            if (ticketButtonRef.current?.contains(currentElement)) return; // Let link handler handle
-
-            console.log("HeroSection non-link listener: Potential scroll trigger clicked outside form:", elementText || ticketClass);
-            // Stop propagation ONLY for these specific external triggers
-            e.preventDefault();
-            e.stopPropagation(); // Stop click here for THESE elements
-            throttledScrollToTickets(e as unknown as React.MouseEvent);
-            return; // Handled
-          }
-        }
-        // Stop traversing up if we hit the body or html
-        if (!currentElement.parentElement || currentElement.id === 'reserve-tickets') break;
-        currentElement = currentElement.parentElement;
-      }
+      // Completely disable any automatic scrolling when clicking anywhere
+      // This prevents scrolling when clicking on the title or any other element
+      console.log("Auto-scroll functionality completely disabled");
     };
 
     // Attach the listener
@@ -198,7 +192,7 @@ export default function HeroSection() {
       <header className="absolute top-0 left-0 right-0 z-30 px-4 py-2 sm:py-6 md:py-10">
         <div className="container mx-auto flex flex-col items-center justify-center text-center">
           {/* Title structure */}
-          <div className="flex items-center justify-center mb-2 sm:mb-4 w-full overflow-x-auto no-scrollbar"><div className="h-[3px] md:h-[4px] bg-red-500 w-10 md:w-40 mr-2 md:mr-4 shrink-0 decorative-line"></div><span className="text-red-500 text-4xl md:text-7xl mr-2 md:mr-3 shrink-0 decorative-dot">•</span><h1 className="text-[3.5rem] sm:text-[5rem] md:text-[9rem] font-bold text-white tracking-tighter leading-none uppercase whitespace-nowrap title-3d"><span className="text-red-500">F.</span>HERRERA</h1><span className="text-red-500 text-4xl md:text-7xl ml-2 md:ml-3 shrink-0 decorative-dot">•</span><div className="h-[3px] md:h-[4px] bg-red-500 w-10 md:w-40 ml-2 md:ml-4 shrink-0 decorative-line"></div></div>
+          <div className="flex items-center justify-center mb-2 sm:mb-4 w-full overflow-x-auto no-scrollbar"><div className="h-[3px] md:h-[4px] bg-red-500 w-10 md:w-40 mr-2 md:mr-4 shrink-0 decorative-line"></div><span className="text-red-500 text-4xl md:text-7xl mr-2 md:mr-3 shrink-0 decorative-dot">•</span><h1 className="text-[3.5rem] sm:text-[5rem] md:text-[9rem] font-bold text-white tracking-tighter leading-none uppercase whitespace-nowrap title-3d"><span className="text-red-500">FRANCISCO</span>HERRERA</h1><span className="text-red-500 text-4xl md:text-7xl ml-2 md:ml-3 shrink-0 decorative-dot">•</span><div className="h-[3px] md:h-[4px] bg-red-500 w-10 md:w-40 ml-2 md:ml-4 shrink-0 decorative-line"></div></div>
           <div className="mb-3 sm:mb-6 md:mb-8 relative"><h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-white tracking-wide uppercase">La Música Une</h2><div className="h-1 bg-red-500 w-16 md:w-32 absolute -bottom-2 md:-bottom-3 left-1/2 transform -translate-x-1/2"></div></div>
           {/* Main "Tickets / Boletos" Button - Ref assigned */}
           <a ref={ticketButtonRef} href="#reserve-tickets" className="group bg-red-500 border-2 border-red-500 text-white px-4 sm:px-6 md:px-10 py-2 sm:py-3 md:py-4 text-sm sm:text-base md:text-xl font-bold uppercase tracking-wider hover:bg-black transition-all rounded-full shadow-lg transform hover:scale-105 flex items-center justify-center mb-4 sm:mb-10 md:mb-16 pulse-animation">
@@ -324,74 +318,13 @@ export default function HeroSection() {
                 const originalText = button.innerHTML;
                 button.innerHTML = `<span class="loading-dot-container"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></span>`;
 
-                console.log("RESERVE SPOT LINK CLICKED - IMPROVED MODERN SCROLL");
-                document.body.classList.add('smooth-scrolling');
+                console.log("Auto-scroll has been disabled");
 
-                // Modern scrolling with IntersectionObserver if available
-                const heroSection = document.getElementById('reserve-tickets');
-                if (heroSection) {
-                  // Use requestAnimationFrame for smoother animation
-                  requestAnimationFrame(() => {
-                    // Calculate position
-                    const rect = heroSection.getBoundingClientRect();
-                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                    const targetPosition = rect.top + scrollTop - 50;
-
-                    // Create smooth scrolling with cubic-bezier easing
-                    const startPosition = window.pageYOffset;
-                    const distance = targetPosition - startPosition;
-                    const duration = 1000; // ms
-                    let startTime: number | null = null;
-
-                    // Custom easing animation
-                    function easeInOutCubic(t: number): number {
-                      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-                    }
-
-                    function scrollAnimation(currentTime: number) {
-                      if (startTime === null) startTime = currentTime;
-                      const timeElapsed = currentTime - startTime;
-                      const progress = Math.min(timeElapsed / duration, 1);
-                      const easeProgress = easeInOutCubic(progress);
-
-                      window.scrollTo(0, startPosition + distance * easeProgress);
-
-                      if (timeElapsed < duration) {
-                        requestAnimationFrame(scrollAnimation);
-                      } else {
-                        // Animation complete - restore button
-                        setTimeout(() => {
-                          button.innerHTML = originalText;
-                          button.classList.remove('reserve-button-active');
-
-                          // Add highlight effect and ensure heroSection exists
-                          if (heroSection) {
-                            const originalBg = heroSection.style.backgroundColor || '';
-                            heroSection.style.backgroundColor = 'rgba(255, 0, 0, 0.1)';
-
-                            // Focus form
-                            const formInput = heroSection.querySelector('input');
-                            if (formInput) {
-                              formInput.focus({ preventScroll: true });
-                            }
-
-                            // Reset background
-                            setTimeout(() => {
-                              if (heroSection) {
-                                heroSection.style.backgroundColor = originalBg;
-                              }
-                              history.pushState(null, '', '#reserve-tickets');
-                              document.body.classList.remove('smooth-scrolling');
-                            }, 800);
-                          }
-                        }, 200);
-                      }
-                    }
-
-                    // Start the animation
-                    requestAnimationFrame(scrollAnimation);
-                  });
-                }
+                // Restore button after a brief delay
+                setTimeout(() => {
+                  button.innerHTML = originalText;
+                  button.classList.remove('reserve-button-active');
+                }, 500);
               }}>
               Reserve your spot Today →
             </a>

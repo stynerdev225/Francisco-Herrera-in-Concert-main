@@ -132,7 +132,7 @@ export default function Sponsors() {
                             className="bg-white/10 border-2 border-white/20 hover:border-red-500/30 rounded-xl p-6 transition-all duration-300 hover:bg-white/15 transform hover:scale-105 group"
                         >
                             <div className="relative h-44 w-60 md:w-72">
-                                <div className={`h-full w-full rounded-lg flex items-center justify-center p-4 ${sponsor.customStyles?.container || "bg-white"}`}>
+                                <div className={`h-full w-full rounded-lg flex items-center justify-center p-4 relative ${sponsor.customStyles?.container || "bg-white"}`}>
                                     {sponsor.logo ? (
                                         <Image
                                             src={sponsor.logo}
@@ -163,4 +163,4 @@ export default function Sponsors() {
             </div>
         </div>
     );
-} 
+}

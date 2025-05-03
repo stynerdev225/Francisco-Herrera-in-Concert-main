@@ -58,28 +58,31 @@ export default function MarketingSection() {
   const lastScrollAttemptRef = useRef<number>(0);
   const isScrollingRef = useRef<boolean>(false);
 
-  // --- Functions (Unchanged from your version) ---
+  // --- Functions (COMPLETELY DISABLED all scroll functionality) ---
   const scrollToElement = (elementId: string) => {
-    if (typeof window === 'undefined') return; const element = document.getElementById(elementId);
-    if (element) { const rect = element.getBoundingClientRect(); const scrollTop = window.pageYOffset || document.documentElement.scrollTop; const targetPosition = rect.top + scrollTop; window.scrollTo({ top: targetPosition, behavior: "smooth", }) }
+    // DISABLED - No scrolling
+    return;
   }
+
   const throttledScrollToTickets = (event?: React.MouseEvent) => {
-    const now = Date.now(); if (isScrollingRef.current) { console.log("Scroll in progress - ignoring duplicate scroll request"); return; }
-    if (now - lastScrollAttemptRef.current > 2000) { lastScrollAttemptRef.current = now; isScrollingRef.current = true; scrollToTickets(event); setTimeout(() => { isScrollingRef.current = false; }, 2500); } else { console.log("Scroll throttled - ignoring duplicate scroll request within 2 seconds"); }
+    // DISABLED - No scrolling
+    return;
   };
+
   const scrollToTickets = (event?: React.MouseEvent) => {
-    if (typeof window !== 'undefined') { const heroSection = document.getElementById('reserve-tickets'); if (heroSection) { const rect = heroSection.getBoundingClientRect(); if (rect.top >= -100 && rect.top <= 150) { console.log("Already at tickets section - ignoring scroll request"); return; } } }
-    if (event) { event.preventDefault(); } console.log("GUARANTEED SCROLL TO TICKETS SECTION"); if (typeof window === 'undefined') return;
-    setTimeout(() => {
-      const heroSection = document.getElementById('reserve-tickets'); if (!heroSection) { console.log("WARNING: Could not find #reserve-tickets section"); window.scrollTo({ top: window.innerHeight, behavior: 'smooth' }); setTimeout(() => { window.location.hash = 'reserve-tickets'; }, 100); return; }
-      console.log("FOUND HERO SECTION, USING DIRECT APPROACH"); const rect = heroSection.getBoundingClientRect(); const scrollTop = window.pageYOffset || document.documentElement.scrollTop; const absoluteY = rect.top + scrollTop; window.scroll({ top: absoluteY - 50, behavior: 'smooth' }); setTimeout(() => { history.pushState(null, '', '#reserve-tickets'); }, 100); heroSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      const shouldFocusInput = event && ((event as any)?.ticketButton === true || (event.target as HTMLElement)?.textContent?.toLowerCase().includes('ticket') || (event.target as HTMLElement)?.closest('[href="#reserve-tickets"]') !== null);
-      if (shouldFocusInput) { setTimeout(() => { const formInput = heroSection.querySelector('input'); if (formInput) { formInput.focus({ preventScroll: true }); formInput.style.backgroundColor = 'rgba(255, 0, 0, 0.1)'; setTimeout(() => { formInput.style.backgroundColor = ''; }, 1000); } }, 800); }
-      setTimeout(() => { const originalBg = heroSection.style.backgroundColor || ''; heroSection.style.backgroundColor = 'rgba(255, 0, 0, 0.1)'; setTimeout(() => { heroSection.style.backgroundColor = originalBg; }, 500); }, 800);
-    }, 100);
+    // DISABLED - No scrolling
+    return;
   };
-  const scrollToTop = () => { if (typeof window === 'undefined') return; window.scrollTo({ top: 0, behavior: "smooth", }); setTimeout(() => { history.pushState(null, '', window.location.pathname); }, 800); }
-  const scrollToContent = () => { if (typeof window === 'undefined') return; scrollToElement("reserve-tickets") }
+
+  const scrollToTop = () => {
+    // DISABLED - No scrolling
+    return;
+  }
+
+  const scrollToContent = () => {
+    // DISABLED - No scrolling
+    return;
+  }
 
   // --- useEffects (Unchanged from your version, except the last one) ---
   useEffect(() => { // scroll/hash/anchor listener
@@ -88,61 +91,10 @@ export default function MarketingSection() {
     if (reserveTicketsSection) {
       reserveTicketsSection.style.scrollMarginTop = "50px";
       (reserveTicketsSection.style as any).scrollSnapMarginTop = "50px";
-      console.log("Applied scroll margin to reserve-tickets section");
-      // DISABLED automatic scrolling on hash
-      // if (window.location.hash === '#reserve-tickets') { 
-      //   setTimeout(() => { 
-      //     throttledScrollToTickets(); 
-      //   }, 300); 
-      // }
     }
 
-    // DISABLED hash change handler
-    const handleHashChange = () => {
-      // Disabled automatic scrolling on hash change
-      // if (window.location.hash === '#reserve-tickets') { 
-      //   console.log("Hash changed to #reserve-tickets, ensuring scroll"); 
-      //   setTimeout(() => { 
-      //     throttledScrollToTickets(); 
-      //   }, 100); 
-      // } 
-    };
-
-    window.addEventListener('hashchange', handleHashChange);
-
-    // DISABLED initial hash check
-    // if (window.location.hash === '#reserve-tickets') { 
-    //   handleHashChange(); 
-    // }
-    const handleScroll = () => { const scrollPosition = window.scrollY || document.documentElement.scrollTop; const shouldShowButtons = scrollPosition > 300; setShowScrollUp(shouldShowButtons); const scrollTopButton = scrollButtonsRef.current[0]; const scrollTicketsButton = scrollButtonsRef.current[1]; const updateButtonVisibility = (button: HTMLButtonElement | null, show: boolean) => { if (button) { button.style.display = show ? 'flex' : 'none'; button.style.opacity = show ? '1' : '0'; button.style.visibility = show ? 'visible' : 'hidden'; } }; updateButtonVisibility(scrollTopButton, shouldShowButtons); updateButtonVisibility(scrollTicketsButton, shouldShowButtons); }; window.addEventListener("scroll", handleScroll);
-    const handleAnchorClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-
-      // FIXED: Check if target supports closest() method
-      const anchor = target && 'closest' in target ? target.closest('a[href^="#"]') : null;
-
-      if (anchor) {
-        const targetId = anchor.getAttribute("href");
-        if (targetId === "#reserve-tickets") {
-          e.preventDefault();
-          scrollToTickets();
-          return;
-        }
-        if (targetId && targetId !== "#") {
-          e.preventDefault();
-          const targetIdWithoutHash = targetId.slice(1);
-          history.pushState(null, '', `#${targetIdWithoutHash}`);
-          setTimeout(() => {
-            const targetElement = document.querySelector(targetId);
-            if (targetElement) {
-              targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-          }, 100);
-        }
-      }
-    };
-    document.addEventListener("click", handleAnchorClick);
-    return () => { document.removeEventListener("click", handleAnchorClick); window.removeEventListener("scroll", handleScroll); window.removeEventListener('hashchange', handleHashChange); }
+    // No event listeners - disabled all scrolling functionality
+    return () => { };
   }, [])
   useEffect(() => { // Mobile detection
     if (typeof window === 'undefined') return; const checkMobile = () => { setIsMobileView(window.innerWidth <= 640) }; checkMobile(); window.addEventListener('resize', checkMobile); return () => window.removeEventListener('resize', checkMobile)
@@ -182,72 +134,15 @@ export default function MarketingSection() {
     //   }
     // }
   }, []);
-  useEffect(() => { // Link Click Interception (Unchanged)
-    if (typeof window === 'undefined') return; const handleLinkClick = (e: MouseEvent) => { const target = e.target as HTMLElement; let currentElement: HTMLElement | null = target; while (currentElement) { if (currentElement.tagName === 'A') { const href = currentElement.getAttribute('href'); console.log("LINK CLICKED:", href); if (href && (href.startsWith('#') || href.includes('ticket') || href.includes('reserve') || href.includes('boleto'))) { console.log("INTERCEPTING LINK CLICK:", href); e.preventDefault(); e.stopPropagation(); document.body.classList.add('smooth-scrolling'); if (href === '#reserve-tickets' || href.includes('ticket') || href.includes('reserve')) { throttledScrollToTickets(e as unknown as React.MouseEvent); } else { const targetId = href.startsWith('#') ? href.substring(1) : href; history.pushState(null, '', `#${targetId}`); const targetElement = document.getElementById(targetId); if (targetElement) { targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' }); } } setTimeout(() => { document.body.classList.remove('smooth-scrolling'); }, 1000); return; } } currentElement = currentElement.parentElement; } }; document.addEventListener('click', handleLinkClick, true); return () => { document.removeEventListener('click', handleLinkClick, true); };
-  }, []);
-
-  // --- *** useEffect with the PROBLEMATIC Non-Link Click Handler - NOW FIXED *** ---
   useEffect(() => {
-    if (typeof window === 'undefined') return; // Client-side only
+    // Do nothing - all scrolling functionality disabled
+    return () => { };
+  }, []); // Empty dependency array instead of the original problematic event listener
 
-    const handleNonLinkClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-
-      // **** FIXED: Check if target is an Element that supports closest() method ****
-      if (target && 'closest' in target && target.closest('#reserve-tickets')) {
-        // If the click originated within the hero section form area,
-        // THIS listener should ignore it completely and let hero-section handle it.
-        console.log("MarketingSection non-link listener: Click inside #reserve-tickets - IGNORING.");
-        return; // <<<< EXIT EARLY, DO NOT STOP PROPAGATION or preventDefault
-      }
-      // **** END OF FIX ****
-
-      // ----- Logic below ONLY runs for clicks OUTSIDE the form area -----
-
-      // Skip links (handled by handleAnchorClick/handleLinkClick) and form inputs
-      if (target.tagName === 'A' ||
-        ('closest' in target && target.closest('a')) ||
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        ('closest' in target && target.closest('input')) ||
-        ('closest' in target && target.closest('textarea'))) {
-        return;
-      }
-
-      // Check buttons/divs/spans *outside* the form for ticket-related text/classes
-      let currentElement: HTMLElement | null = target;
-      while (currentElement) {
-        // Only check relevant tags
-        if (currentElement.tagName === 'BUTTON' || currentElement.tagName === 'SPAN' || currentElement.tagName === 'DIV') {
-          const elementText = currentElement.textContent?.toLowerCase() || '';
-          const classList = Array.from(currentElement.classList);
-          const ticketClass = classList.find(cn => cn.includes('ticket') || cn.includes('reserve') || cn.includes('boleto'));
-
-          // If it looks like a scroll trigger *and is outside the form*
-          if (ticketClass || elementText.includes('ticket') || elementText.includes('boleto') || elementText.includes('reserve')) {
-            // Check it's not one of the specific buttons handled by their own onClick if necessary
-            if (scrollButtonsRef.current.includes(currentElement as HTMLButtonElement)) return; // Let specific onClick handle
-            if (ticketButtonRef.current?.contains(currentElement)) return; // Let link handler handle
-
-            console.log("MarketingSection non-link listener: Potential scroll trigger clicked outside form:", elementText || ticketClass);
-            // Stop propagation ONLY for these specific external triggers
-            e.preventDefault();
-            e.stopPropagation(); // Stop click here for THESE elements
-            throttledScrollToTickets(e as unknown as React.MouseEvent);
-            return; // Handled
-          }
-        }
-        // Stop traversing up if we hit the body or html
-        if (!currentElement.parentElement || currentElement.id === 'reserve-tickets') break;
-        currentElement = currentElement.parentElement;
-      }
-    };
-
-    // Attach the listener
-    document.addEventListener('click', handleNonLinkClick, true); // Still use capture phase
-    // Cleanup
-    return () => { document.removeEventListener('click', handleNonLinkClick, true); };
-  }, []); // Empty dependency array
+  useEffect(() => {
+    // Do nothing - all scrolling functionality disabled
+    return () => { };
+  }, []);
 
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

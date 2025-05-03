@@ -51,8 +51,8 @@ const guests: Guest[] = [
             es: "Voces"
         },
         bio: {
-            en: "Liliana Herrera's powerful vocals bring depth and emotion to every performance. With a range that spans multiple octaves, she combines traditional folk singing with contemporary styles.",
-            es: "Las poderosas voces de Liliana Herrera aportan profundidad y emoción a cada actuación. Con un rango que abarca múltiples octavas, combina el canto folclórico tradicional con estilos contemporáneos."
+            en: "Liliana Herrera is a beloved singer-songwriter, composer, and storyteller whose voice carries the spirit of resilience and deep cultural memory. For over three decades, she has graced stages with songs that honor our histories. From her acclaimed work Golondrina to leading San Francisco's first Culture & Language Justice Symposium, Liliana brings heart, artistry, and vision to everything she touches.",
+            es: "Liliana Herrera es una querida cantautora, compositora y narradora cuya voz encarna el espíritu de la resiliencia y la memoria cultural profunda. Durante más de tres décadas, ha iluminado escenarios con canciones que honran nuestras historias. Desde su aclamada obra Golondrina hasta la organización del primer Simposio sobre Cultura y Justicia Lingüística en San Francisco, Liliana aporta corazón y visión a todo lo que toca."
         },
         image: "https://images.unsplash.com/photo-1669181339677-0f646762be03?q=80&w=800&auto=format&fit=crop"
     },
@@ -87,8 +87,8 @@ const guests: Guest[] = [
             es: "Teclados"
         },
         bio: {
-            en: "Chris Trinidad brings harmonic richness through his keyboard artistry. His background in classical and jazz piano allows him to create textured soundscapes that enhance Francisco's compositions.",
-            es: "Chris Trinidad aporta riqueza armónica a través de su arte con los teclados. Su formación en piano clásico y jazz le permite crear paisajes sonoros texturizados que realzan las composiciones de Francisco."
+            en: "Filipino-Canadian and San Francisco Bay Area-based musician Chris Trinidad creates music where diverse influences converge. Originally from Vancouver, his musical journey spans voice, piano, bass guitar, and drums. With formal education in Jazz Studies, Music Education, and a doctorate in Educational Leadership, his compositions draw inspiration from jazz, Cuban Timba, Original Pilipino Music, and Gregorian Chant. Chris divides his time between creating music, teaching, and honing his improvisation skills.",
+            es: "El músico filipino-canadiense Chris Trinidad, residente en el área de la Bahía de San Francisco, crea música donde convergen diversas influencias. Originario de Vancouver, su viaje musical abarca voz, piano, bajo y batería. Con formación académica en Jazz, Educación Musical y un doctorado en Liderazgo Educativo, sus composiciones se inspiran en jazz, timba cubana, música filipina y canto gregoriano. Actualmente divide su tiempo entre crear música, enseñar y perfeccionar sus habilidades de improvisación."
         },
         image: "https://images.unsplash.com/photo-1720962158802-f80b1e855e03?q=80&w=800&auto=format&fit=crop"
     },
@@ -105,14 +105,14 @@ const guests: Guest[] = [
         image: "https://images.unsplash.com/photo-1628690131818-da160d91367e?q=80&w=800&auto=format&fit=crop"
     },
     {
-        name: "María Volonté",
+        name: "Roberto Corona",
         instrument: {
-            en: "Vocals & Guitar",
-            es: "Voces y Guitarra"
+            en: "Cajón",
+            es: "Cajón"
         },
         bio: {
-            en: "María Volonté brings her acclaimed vocal and guitar talents as a special guest. Her fusion of tango, jazz and Latin American roots creates a unique soundscape that perfectly complements Francisco's musical vision.",
-            es: "María Volonté aporta su aclamado talento vocal y de guitarra como invitada especial. Su fusión de tango, jazz y raíces latinoamericanas crea un paisaje sonoro único que complementa perfectamente la visión musical de Francisco."
+            en: "Roberto Corona brings his masterful Cajón playing to the concert. His rhythmic expertise and deep understanding of Afro-Peruvian techniques create a powerful percussive foundation that perfectly complements Francisco's musical vision.",
+            es: "Roberto Corona aporta su magistral interpretación del Cajón al concierto. Su experiencia rítmica y profundo conocimiento de las técnicas afroperuanas crean una poderosa base percusiva que complementa perfectamente la visión musical de Francisco."
         },
         image: "https://images.unsplash.com/photo-1654124803203-8ef9f155d60e?q=80&w=800&auto=format&fit=crop"
     },
@@ -134,6 +134,8 @@ export default function SpecialGuests() {
     const { t, language } = useLanguage();
     const [featuredGuestIndex, setFeaturedGuestIndex] = useState(0);
     const [currentWeek, setCurrentWeek] = useState(1);
+    const [lilianaLang, setLilianaLang] = useState<'en' | 'es'>('en');
+    const [chrisLang, setChrisLang] = useState<'en' | 'es'>('en'); // Add toggle state for Chris's card
 
     // We'll just use a fixed week number (always week 1) instead of calculating based on date
     useEffect(() => {
@@ -191,6 +193,92 @@ export default function SpecialGuests() {
             };
         }
     }, []);
+
+    // Function to handle bio display - show bio in selected language for special guests
+    const displayBio = (guest: Guest) => {
+        if (guest.name === "Liliana Herrera") {
+            return (
+                <div className="relative">
+                    <p className="text-gray-300 text-lg leading-relaxed">
+                        {guest.bio?.[lilianaLang]}
+                    </p>
+                    <div className="mt-4 flex justify-end">
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setLilianaLang(lilianaLang === 'en' ? 'es' : 'en');
+                            }}
+                            className="bg-red-500/30 hover:bg-red-500/50 text-white px-3 py-1 rounded-md text-sm transition-all duration-200"
+                        >
+                            {lilianaLang === 'en' ? 'Ver en Español' : 'View in English'}
+                        </button>
+                    </div>
+                </div>
+            );
+        } else if (guest.name === "Chris Trinidad") {
+            return (
+                <div className="relative">
+                    <p className="text-gray-300 text-lg leading-relaxed">
+                        {guest.bio?.[chrisLang]}
+                    </p>
+                    <div className="mt-4 flex justify-end">
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setChrisLang(chrisLang === 'en' ? 'es' : 'en');
+                            }}
+                            className="bg-red-500/30 hover:bg-red-500/50 text-white px-3 py-1 rounded-md text-sm transition-all duration-200"
+                        >
+                            {chrisLang === 'en' ? 'Ver en Español' : 'View in English'}
+                        </button>
+                    </div>
+                </div>
+            );
+        } else {
+            return (
+                <p className="text-gray-300 text-lg leading-relaxed">
+                    {guest.bio?.[language]}
+                </p>
+            );
+        }
+    };
+
+    // Function to display instrument in the selected language
+    const displayInstrument = (guest: Guest) => {
+        if (guest.name === "Liliana Herrera") {
+            return (
+                <div className="flex flex-col gap-1">
+                    <p className="text-2xl text-red-400">{guest.instrument[lilianaLang]}</p>
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setLilianaLang(lilianaLang === 'en' ? 'es' : 'en');
+                        }}
+                        className="text-sm text-white/60 hover:text-white mt-1"
+                    >
+                        {lilianaLang === 'en' ? 'Ver en Español' : 'View in English'}
+                    </button>
+                </div>
+            );
+        } else if (guest.name === "Chris Trinidad") {
+            return (
+                <div className="flex flex-col gap-1">
+                    <p className="text-2xl text-red-400">{guest.instrument[chrisLang]}</p>
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setChrisLang(chrisLang === 'en' ? 'es' : 'en');
+                        }}
+                        className="text-sm text-white/60 hover:text-white mt-1"
+                    >
+                        {chrisLang === 'en' ? 'Ver en Español' : 'View in English'}
+                    </button>
+                </div>
+            );
+        } else {
+            return <p className="text-2xl text-red-400 mb-6">{guest.instrument[language]}</p>;
+        }
+    };
 
     // Get the featured guest
     const featuredGuest = guests[featuredGuestIndex];
@@ -252,14 +340,12 @@ export default function SpecialGuests() {
                                 {/* Desktop-only name and instrument */}
                                 <div className="hidden md:block">
                                     <h3 className="text-4xl font-black text-white mb-2">{featuredGuest.name}</h3>
-                                    <p className="text-2xl text-red-400 mb-6">{featuredGuest.instrument[language]}</p>
+                                    {displayInstrument(featuredGuest)}
                                     <div className="h-1 bg-red-500/50 w-24 mb-6"></div>
                                 </div>
 
                                 <div className="space-y-4">
-                                    <p className="text-gray-300 text-lg leading-relaxed">
-                                        {featuredGuest.bio?.[language]}
-                                    </p>
+                                    {displayBio(featuredGuest)}
                                     <p className="text-white/80 italic text-lg">
                                         {t("special.guests.joining")} Francisco Herrera {t("special.guests.forConcert")}
                                     </p>
@@ -336,6 +422,38 @@ export default function SpecialGuests() {
                                                     </p>
                                                 </div>
                                             )}
+
+                                            {/* Language toggle for Liliana Herrera's card */}
+                                            {guest.name === "Liliana Herrera" && (
+                                                <div className="absolute top-2 right-2 z-20">
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setLilianaLang(lilianaLang === 'en' ? 'es' : 'en');
+                                                        }}
+                                                        className="bg-black/70 hover:bg-red-900/70 text-white rounded-md px-2 py-1 text-xs shadow-lg border border-white/20 transition-all duration-200"
+                                                        title={lilianaLang === 'en' ? 'Cambiar a Español' : 'Switch to English'}
+                                                    >
+                                                        {lilianaLang === 'en' ? 'Español' : 'English'}
+                                                    </button>
+                                                </div>
+                                            )}
+
+                                            {/* Language toggle for Chris Trinidad's card */}
+                                            {guest.name === "Chris Trinidad" && (
+                                                <div className="absolute top-2 right-2 z-20">
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setChrisLang(chrisLang === 'en' ? 'es' : 'en');
+                                                        }}
+                                                        className="bg-black/70 hover:bg-red-900/70 text-white rounded-md px-2 py-1 text-xs shadow-lg border border-white/20 transition-all duration-200"
+                                                        title={chrisLang === 'en' ? 'Cambiar a Español' : 'Switch to English'}
+                                                    >
+                                                        {chrisLang === 'en' ? 'Español' : 'English'}
+                                                    </button>
+                                                </div>
+                                            )}
                                         </>
                                     ) : (
                                         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
@@ -344,11 +462,25 @@ export default function SpecialGuests() {
                                     )}
                                 </div>
 
-                                {/* Show card text info only for non-música latina cards */}
+                                {/* Show card text info with special handling for Liliana */}
                                 {guest.name !== "Música Latina" && (
                                     <div className="p-3 text-center">
                                         <h3 className="text-sm font-bold text-white">{guest.name}</h3>
-                                        <p className="text-xs text-red-400/80">{guest.instrument[language]}</p>
+                                        {guest.name === "Liliana Herrera" ? (
+                                            <div className="flex flex-col items-center">
+                                                <p className="text-xs text-red-400/80">
+                                                    {guest.instrument[lilianaLang]}
+                                                </p>
+                                            </div>
+                                        ) : guest.name === "Chris Trinidad" ? (
+                                            <div className="flex flex-col items-center">
+                                                <p className="text-xs text-red-400/80">
+                                                    {guest.instrument[chrisLang]}
+                                                </p>
+                                            </div>
+                                        ) : (
+                                            <p className="text-xs text-red-400/80">{guest.instrument[language]}</p>
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -358,4 +490,4 @@ export default function SpecialGuests() {
             </div>
         </div>
     );
-} 
+}

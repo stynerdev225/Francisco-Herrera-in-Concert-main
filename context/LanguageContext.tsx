@@ -13,7 +13,25 @@ interface LanguageContextType {
 
 // Basic translations map
 const translations: Record<string, Record<Language, string>> = {
-    // Navigation
+    // Navigation with simple keys (to fix warnings)
+    "home": {
+        en: "Home",
+        es: "Inicio",
+    },
+    "music": {
+        en: "Music",
+        es: "Música",
+    },
+    "buy tickets": {
+        en: "Buy Tickets",
+        es: "Comprar Boletos",
+    },
+    "contact": {
+        en: "Contact",
+        es: "Contacto",
+    },
+
+    // Navigation with prefixed keys
     "nav.home": {
         en: "Home",
         es: "Inicio",
@@ -41,6 +59,112 @@ const translations: Record<string, Record<Language, string>> = {
     "nav.concert": {
         en: "Francisco Herrera in Concert",
         es: "Francisco Herrera en Concierto",
+    },
+
+    // Ticket section
+    "tickets.title": {
+        en: "Francisco Herrera in Concert",
+        es: "Francisco Herrera en Concierto",
+    },
+    "tickets.subtitle": {
+        en: "La Migración Fortaleza la Nación / Migration Strengthens the Nation",
+        es: "La Migración Fortaleza la Nación / Migration Strengthens the Nation",
+    },
+    "tickets.venue": {
+        en: "Venue",
+        es: "Lugar",
+    },
+    "tickets.date": {
+        en: "Date",
+        es: "Fecha",
+    },
+    "tickets.time": {
+        en: "Time",
+        es: "Hora",
+    },
+    "tickets.description": {
+        en: "Event Description",
+        es: "Descripción del Evento",
+    },
+    "tickets.standard": {
+        en: "Standard Admission",
+        es: "Entrada Estándar",
+    },
+    "tickets.premium": {
+        en: "Premium Package",
+        es: "Paquete Premium",
+    },
+    "tickets.remaining": {
+        en: "Limited tickets remaining",
+        es: "Quedan boletos limitados",
+    },
+    "tickets.selling": {
+        en: "Selling fast",
+        es: "Vendiéndose rápido",
+    },
+    "tickets.few": {
+        en: "Few tickets left",
+        es: "Pocos boletos restantes",
+    },
+    "tickets.note": {
+        en: "Tickets will also be available at the door, but we recommend securing yours now as this event may sell out.",
+        es: "Los boletos también estarán disponibles en la puerta, pero recomendamos asegurar el suyo ahora ya que este evento puede agotarse.",
+    },
+    "tickets.buyNow": {
+        en: "BUY TICKETS NOW",
+        es: "COMPRAR BOLETOS AHORA",
+    },
+    "tickets.featured": {
+        en: "Featured Artists",
+        es: "Artistas Destacados",
+    },
+    "tickets.mc": {
+        en: "MC",
+        es: "MC",
+    },
+    "tickets.opening": {
+        en: "Opening act",
+        es: "Acto de apertura",
+    },
+    "tickets.production": {
+        en: "Production",
+        es: "Producción",
+    },
+    "tickets.producedBy": {
+        en: "Produced by",
+        es: "Producido por",
+    },
+    "tickets.producer": {
+        en: "Producer",
+        es: "Productor",
+    },
+    "tickets.priceNote": {
+        en: "Ticket prices include all fees",
+        es: "Los precios de los boletos incluyen todas las tarifas",
+    },
+    "tickets.doorOpen": {
+        en: "Doors Open at 6pm",
+        es: "Puertas abren a las 6pm",
+    },
+    "tickets.runTime": {
+        en: "Run time: 2 Hours",
+        es: "Duración: 2 Horas",
+    },
+    "tickets.reserved": {
+        en: "Reserved Seating",
+        es: "Asientos Reservados",
+    },
+    "tickets.venue.name": {
+        en: "Francisco Herrera Concert Venue",
+        es: "Lugar del Concierto de Francisco Herrera",
+    },
+    "tickets.generalSeating": {
+        en: "General seating, full access to all performances",
+        es: "Asientos generales, acceso completo a todas las presentaciones",
+    },
+    "tickets.prioritySeating": {
+        en: "Priority seating, exclusive meet & greet after the show",
+        es: "Asientos prioritarios, encuentro exclusivo después del espectáculo",
     },
 
     // Language toggle

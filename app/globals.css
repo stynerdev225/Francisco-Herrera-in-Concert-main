@@ -296,3 +296,122 @@ html {
 .sound-wave-5 {
   animation: sound-wave-5 0.7s infinite ease-in-out;
 }
+
+/* Sound wave animation for music player button - enhanced for better visibility */
+.sound-wave-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  pointer-events: none;
+}
+
+.sound-bar {
+  width: 3px;
+  height: 4px;
+  background-color: white;
+  border-radius: 1px;
+  transform-origin: center bottom;
+  box-shadow: 0 0 3px white, 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+.sound-bar:nth-child(1) {
+  animation: sound-bar-animate 0.7s infinite ease-in-out alternate;
+}
+
+.sound-bar:nth-child(2) {
+  animation: sound-bar-animate 0.5s infinite ease-in-out alternate;
+  animation-delay: 0.2s;
+}
+
+.sound-bar:nth-child(3) {
+  animation: sound-bar-animate 0.9s infinite ease-in-out alternate;
+  animation-delay: 0.1s;
+}
+
+.sound-bar:nth-child(4) {
+  animation: sound-bar-animate 0.6s infinite ease-in-out alternate;
+  animation-delay: 0.3s;
+}
+
+@keyframes sound-bar-animate {
+  0% {
+    height: 4px;
+    opacity: 0.9;
+  }
+  100% {
+    height: 12px;
+    opacity: 1;
+  }
+}
+
+/* Unified image and banner movement - these stay together */
+.unified-elements {
+  position: relative;
+}
+
+.unified-elements.move-down img[alt="Guitarist performing"] {
+  transform: translateY(25%) !important;
+}
+
+.unified-elements.move-down .rotating-banner-container {
+  bottom: -15px !important;
+}
+
+/* For mobile only */
+@media (max-width: 640px) {
+  /* Target both the guitarist image and the banner when the .move-together class is applied */
+  .move-together img[alt="Guitarist performing"] {
+    transform: translate(-50%, -15%) !important;
+  }
+
+  .move-together .rotating-banner-container {
+    bottom: 0 !important;
+  }
+
+  .move-down-more img[alt="Guitarist performing"] {
+    transform: translate(-50%, -5%) !important;
+  }
+
+  .move-down-more .rotating-banner-container {
+    bottom: 0 !important;
+  }
+
+  .move-up-more img[alt="Guitarist performing"] {
+    transform: translate(-50%, -40%) !important;
+  }
+}
+
+/* Move rotating banner lower on mobile */
+@media (max-width: 767px) {
+  /* Target the standalone rotating banner directly */
+  main > div.w-full.bg-black {
+    margin-top: 8rem !important; /* Move banner down on mobile */
+    height: auto !important; /* Ensure height is determined by content */
+  }
+
+  /* Target the standalone black banner that comes after the hero section */
+  main > div.w-full.bg-black.py-8.overflow-hidden {
+    margin-top: 200px !important; /* Add significant space above the banner on mobile */
+    height: auto !important; /* Ensure height is determined by content */
+    transform: none !important; /* Prevent any transform from affecting the height */
+  }
+
+  /* Critical fix for banner positioning on mobile */
+  .banner-position-wrapper {
+    margin-top: 550px !important; /* Adjusted to move banner down without stretching */
+    position: relative !important;
+    z-index: 999 !important;
+    height: auto !important; /* Ensure height is determined by content */
+    max-height: 120px !important; /* Limit maximum height */
+  }
+
+  /* Ensure the banner content maintains its height */
+  .banner-position-wrapper > div.w-full.bg-black.py-8.overflow-hidden {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: 120px !important; /* Limit maximum height */
+  }
+}

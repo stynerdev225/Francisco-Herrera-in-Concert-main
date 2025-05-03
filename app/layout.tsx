@@ -13,6 +13,8 @@ import dynamic from "next/dynamic"
 import HeroSection from "@/components/hero-section"
 
 const Navigation = dynamic(() => import("@/components/Navigation"), { ssr: false })
+// Import our new mobile-only navigation
+const MobileNavBar = dynamic(() => import("@/components/MobileNavBar"), { ssr: false })
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -57,7 +59,9 @@ export default function RootLayout({
               <Navigation />
               {children}
               <Footer />
-              <BackgroundMusic snippetDuration={45} volumeLevel={0.15} />
+              <BackgroundMusic />
+              {/* Add our mobile-only navbar here - it will automatically only show on mobile */}
+              <MobileNavBar />
             </ThemeProvider>
           </MusicProvider>
         </LanguageProvider>

@@ -1,12 +1,13 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useRef, useCallback, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useLanguage } from "@/context/LanguageContext"
 import { Play, Pause, Info, Download, ExternalLink, Share2, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import MusicHeader from "./music-header"
+import confetti from 'canvas-confetti'
 
 // Define types for song data
 interface Song {
@@ -176,6 +177,8 @@ export default function MusicSection() {
     const [expandedAlbum, setExpandedAlbum] = useState<string>("honor-migrante") // Default expanded album
     const [audioError, setAudioError] = useState<string | null>(null)
     const audioRefs = React.useRef<{ [key: number]: HTMLAudioElement | null }>({})
+    const confettiTriggeredRef = useRef(false);
+    const sectionRef = useRef<HTMLDivElement>(null);
 
     // Audio URLs - Using local MP4 files
     const [songUrls, setSongUrls] = useState<{ [key: number]: string }>({
@@ -212,6 +215,7 @@ export default function MusicSection() {
                         .then(() => {
                             setCurrentlyPlaying(songId);
                             setAudioError(null);
+                            triggerConfetti(); // Trigger confetti effect
                         })
                         .catch(error => {
                             console.error("Error playing audio:", error);
@@ -233,6 +237,7 @@ export default function MusicSection() {
         } else {
             // For other songs, redirect to the provided URL
             window.open(song.previewUrl, "_blank");
+            triggerConfetti(); // Trigger confetti on any song interaction
         }
     }
 
@@ -257,6 +262,7 @@ export default function MusicSection() {
     // Mock function for buying a song
     const handleBuySong = (song: Song) => {
         window.open(song.previewUrl, "_blank");
+        triggerConfetti(); // Trigger confetti on any interaction
     }
 
     // Mock function for buying an album
@@ -264,10 +270,114 @@ export default function MusicSection() {
         alert(`Redirecting to purchase album ${album.title} for ${album.price}`)
         // In production, redirect to actual store or payment gateway
         window.open("https://franciscoherreras-cota.bandcamp.com/", "_blank")
+        triggerConfetti(); // Trigger confetti on album purchase
     }
 
+    // Improved confetti effect with better mobile support
+    const triggerConfetti = useCallback(() => {
+        if (confettiTriggeredRef.current) return;
+
+        try {
+            // Create a dedicated canvas element for confetti
+            const canvas = document.createElement('canvas');
+            canvas.style.position = 'fixed';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100vw';
+            canvas.style.height = '100vh';
+            canvas.style.zIndex = '9999';
+            canvas.style.pointerEvents = 'none';
+            document.body.appendChild(canvas);
+
+            // Create confetti instance on our dedicated canvas
+            const myConfetti = confetti.create(canvas, {
+                resize: true,
+                useWorker: true
+            });
+
+            // Initial burst
+            myConfetti({
+                particleCount: 150,
+                spread: 100,
+                origin: { y: 0.6, x: 0.5 },
+                colors: ['#ff0000', '#ffffff', '#ef4444', '#dc2626'],
+                disableForReducedMotion: false,
+                scalar: 1.5 // Make particles larger
+            });
+
+            // Continue with bursts for 3 seconds
+            let burstCount = 0;
+            const burstInterval = setInterval(() => {
+                burstCount++;
+                if (burstCount > 6) {
+                    clearInterval(burstInterval);
+                    // Clean up the canvas after animation completes
+                    setTimeout(() => {
+                        document.body.removeChild(canvas);
+                    }, 3000);
+                    return;
+                }
+
+                // Random confetti bursts
+                myConfetti({
+                    particleCount: Math.floor(Math.random() * 20) + 10,
+                    angle: Math.random() * 360,
+                    spread: 80,
+                    origin: {
+                        x: 0.2 + Math.random() * 0.6,
+                        y: 0.2 + Math.random() * 0.4
+                    },
+                    colors: ['#ff0000', '#ffffff', '#ef4444', '#dc2626'],
+                    shapes: ['circle', 'square'],
+                    scalar: 1.5
+                });
+            }, 400);
+
+            confettiTriggeredRef.current = true;
+
+            // Reset the flag after some time so it can be triggered again later
+            setTimeout(() => {
+                confettiTriggeredRef.current = false;
+            }, 7000);
+        } catch (error) {
+            console.error("Failed to create confetti effect:", error);
+        }
+    }, []);
+
+    // Add effect to trigger confetti on page load for mobile devices
+    useEffect(() => {
+        // Trigger confetti with delay to ensure it's visible on mobile
+        const confettiTimer = setTimeout(() => {
+            if (typeof window !== 'undefined') {
+                triggerConfetti();
+            }
+        }, 800);
+
+        // Also add intersection observer as backup trigger method
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting && !confettiTriggeredRef.current) {
+                    triggerConfetti();
+                }
+            });
+        }, {
+            threshold: 0.2 // Lower threshold to trigger earlier
+        });
+
+        if (sectionRef.current) {
+            observer.observe(sectionRef.current);
+        }
+
+        return () => {
+            clearTimeout(confettiTimer);
+            if (sectionRef.current) {
+                observer.disconnect();
+            }
+        };
+    }, [triggerConfetti]);
+
     return (
-        <div className="relative w-full bg-gradient-to-r from-purple-700 via-blue-600 to-purple-700 overflow-y-auto flex flex-col min-h-screen">
+        <div ref={sectionRef} className="relative w-full bg-gradient-to-r from-purple-700 via-blue-600 to-purple-700 overflow-y-auto flex flex-col min-h-screen">
             {/* Use the new header component that matches the image */}
             <MusicHeader />
 
