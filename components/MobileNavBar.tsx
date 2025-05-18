@@ -43,7 +43,7 @@ export default function MobileNavBar() {
             navigator.vibrate([50, 30, 50]);
         }
 
-        // Use router.push for client-side navigation
+        // Use Next.js router for navigation
         router.push(path);
 
         // Reset navigation flag after timeout
@@ -177,17 +177,16 @@ export default function MobileNavBar() {
                             >
                                 {labels.music}
                             </a>
+
                             <a
                                 href="/tickets"
-                                className={`block px-3 py-2.5 rounded-lg text-white text-sm font-medium bg-gradient-to-r from-red-600 to-red-500 mt-1 ${touchFeedback === '/tickets' ? 'opacity-90' : ''}`}
+                                className={`block px-3 py-2.5 rounded-lg text-white text-sm font-medium bg-gradient-to-r from-red-600 to-red-500 mt-1 ${touchFeedback === '/tickets' ? 'bg-red-600/10' : ''}`}
                                 onClick={(e) => navigateTo("/tickets", e)}
-                                style={{
-                                    WebkitTapHighlightColor: 'transparent',
-                                    touchAction: 'manipulation'
-                                }}
+                                style={{ WebkitTapHighlightColor: 'transparent' }}
                             >
                                 {labels.buyTickets}
                             </a>
+
                             <a
                                 href="/contact"
                                 className={`block px-3 py-2.5 rounded-lg text-white text-sm font-medium hover:bg-red-600/20 mt-1 ${touchFeedback === '/contact' ? 'bg-red-600/10' : ''}`}
