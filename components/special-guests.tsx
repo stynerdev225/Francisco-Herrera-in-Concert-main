@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import Image from 'next/image';
 
@@ -27,10 +27,10 @@ const guests: Guest[] = [
             es: "Saxofón"
         },
         bio: {
-            en: "Dr. Loco is a master saxophonist with a unique style blending Latin Jazz, Tex-Mex, and traditional Mexican sounds. He has performed with Francisco Herrera for over a decade.",
-            es: "Dr. Loco es un maestro del saxofón con un estilo único que mezcla Jazz Latino, Tex-Mex y sonidos tradicionales mexicanos. Ha actuado con Francisco Herrera durante más de una década."
+            en: "San Antonio, Texas native and San Francisco, California resident, Jose Bernardo Cuellar, Ph.D. is SFSU Professor Emeritus, and leader of Dr. Loco's Rockin' Jalapeño Band. His more recent awards and honors include: The Hrdy Curatorial Fellowship at Harvard University's Peabody Museum of Archaeology & Ethnology (2012), The San Francisco Mayor's Latino Heritage Arts Award (2014), the Loyal Order of Outstanding and Accomplished Texas Musicians Induction (2016), and University of California at Riverside's Radio Aztlan Lifetime-Achievement Award (2019).",
+            es: "Originario de San Antonio, Texas y residente de San Francisco, California, José Bernardo Cuéllar, Ph.D. es Profesor Emérito de SFSU y líder de Dr. Loco's Rockin' Jalapeño Band. Entre sus reconocimientos recientes se encuentran: La Beca Curatorial Hrdy del Museo Peabody de Arqueología y Etnología de la Universidad de Harvard (2012), El Premio a las Artes del Patrimonio Latino del Alcalde de San Francisco (2014), la Inducción a la Orden Leal de Músicos Texanos Sobresalientes y Consumados (2016), y el Premio de Radio Aztlán a la Trayectoria de la Universidad de California en Riverside (2019)."
         },
-        image: "https://images.unsplash.com/photo-1623123776919-e5208e9b0b47?q=80&w=800&auto=format&fit=crop"
+        image: "https://pub-28e558b74ea64a0781531927a8b49e0e.r2.dev/Drloco.JPG"
     },
     {
         name: "Camilo Landau",
@@ -87,10 +87,10 @@ const guests: Guest[] = [
             es: "Teclados"
         },
         bio: {
-            en: "Filipino-Canadian and San Francisco Bay Area-based musician Chris Trinidad creates music where diverse influences converge. Originally from Vancouver, his musical journey spans voice, piano, bass guitar, and drums. With formal education in Jazz Studies, Music Education, and a doctorate in Educational Leadership, his compositions draw inspiration from jazz, Cuban Timba, Original Pilipino Music, and Gregorian Chant. Chris divides his time between creating music, teaching, and honing his improvisation skills.",
-            es: "El músico filipino-canadiense Chris Trinidad, residente en el área de la Bahía de San Francisco, crea música donde convergen diversas influencias. Originario de Vancouver, su viaje musical abarca voz, piano, bajo y batería. Con formación académica en Jazz, Educación Musical y un doctorado en Liderazgo Educativo, sus composiciones se inspiran en jazz, timba cubana, música filipina y canto gregoriano. Actualmente divide su tiempo entre crear música, enseñar y perfeccionar sus habilidades de improvisación."
+            en: "Filipino-Canadian and San Francisco Bay Area-based musician, teacher, and learner Chris Trinidad has fallen into the place where everything is music. Originally from Vancouver, British Columbia, Canada, his relationship with music grew through exploring various instruments beginning with the voice, then the piano, followed by the bass guitar, and finally the drum set with little detours in the world of percussion and forays with the guitar. Chris's formal education includes undergraduate training in Jazz Studies and Secondary Education, graduate study in the fields of Philosophy and Sociology of Music Education and Theological and Liturgical Studies, and doctoral work in Educational and Interdisciplinary Leadership. His compositions take inspiration from jazz musicians such as Ralph Towner, Pat Metheny, Bill Evans, Jack DeJohnette, Brad Turner, Chris Gestrin, and Chris Tarry as well as disparate genres including Cuban Timba, Original Pilipino Music, British Progressive Rock, and Gregorian Chant. All of these seemingly disparate disciplines, inspirations, and interests help to inform the music that he makes. He has discerned that the core purpose of his music is to explore the intersections of his identity and upbringing, while combining these into musical conversations with his current experiences and curiosities. He currently divides his time between creating music, developing high school students into compassionate human beings, and working on defeating his addiction to improvising excessively in the saddest of all keys ... D minor.",
+            es: "Músico, profesor y aprendiz filipino-canadiense radicado en el Área de la Bahía de San Francisco, Chris Trinidad ha encontrado su lugar donde todo es música. Originario de Vancouver, Columbia Británica, Canadá, su relación con la música creció explorando varios instrumentos comenzando con la voz, luego el piano, seguido del bajo, y finalmente la batería, con pequeñas incursiones en el mundo de la percusión y la guitarra. La educación formal de Chris incluye formación en Estudios de Jazz y Educación Secundaria, estudios de posgrado en Filosofía y Sociología de la Educación Musical y Estudios Teológicos y Litúrgicos, y trabajo doctoral en Liderazgo Educativo e Interdisciplinario. Sus composiciones se inspiran en músicos de jazz como Ralph Towner, Pat Metheny, Bill Evans, Jack DeJohnette, Brad Turner, Chris Gestrin y Chris Tarry, así como en géneros dispares como la Timba Cubana, la Música Original Filipina, el Rock Progresivo Británico y el Canto Gregoriano. Todas estas disciplinas, inspiraciones e intereses aparentemente dispares ayudan a dar forma a la música que crea. Ha discernido que el propósito central de su música es explorar las intersecciones de su identidad y crianza, combinándolas en conversaciones musicales con sus experiencias y curiosidades actuales. Actualmente divide su tiempo entre crear música, desarrollar a estudiantes de secundaria como seres humanos compasivos, y trabajar en superar su adicción a improvisar excesivamente en la más triste de todas las tonalidades... Re menor."
         },
-        image: "https://images.unsplash.com/photo-1720962158802-f80b1e855e03?q=80&w=800&auto=format&fit=crop"
+        image: "https://pub-28e558b74ea64a0781531927a8b49e0e.r2.dev/ChrisTrinidad.jpeg"
     },
     {
         name: "Pedro Gómez",
@@ -99,10 +99,10 @@ const guests: Guest[] = [
             es: "Percusión"
         },
         bio: {
-            en: "Pedro Gómez's percussion adds authentic Latin flavor to the performance. Specializing in congas, timbales, and traditional hand percussion, he brings the rhythms of Latin America to life.",
-            es: "La percusión de Pedro Gómez añade un auténtico sabor latino a la actuación. Especializado en congas, timbales y percusión tradicional, da vida a los ritmos de América Latina."
+            en: "Pedro Gomez was introduced to the drum at age 13 during a neighborhood rumba circle in San Francisco's Mission district. His connection to music has always come from a place of community, rooted in the African/Indigenous diaspora. Studying from masters like, Jorge Alabe, Gamo da Paz, Giovanni Hidalgo, John Santos, Malonga Casquelourd, Bongo Sidibe, Lalo Izquierdo, Baba Duru to name a few, has given Pedro a wealth of knowlegede in music of the Afro Diaspora. As a musician Pedro has recorded and played with artist such as Jaguar Wright, Eric Roberson, Al B Sure, Bayonics, Bebe Zahara, and Olodum. He uses thoses experiences to help him currently as a musical director in various projects. With over 25 years of teaching experience in the U.S. and abroad Pedro is always striving to learn and grow. His drive as an artist and educator stems from the belief that musical expression is a form of healing and power. Pedro Gomez is committed to working hard and passing on traditions that uplift, bring joy and a sense of worth to young people and their communities.",
+            es: "Pedro Gómez fue introducido al tambor a los 13 años durante un círculo de rumba en el barrio de la Misión en San Francisco. Su conexión con la música siempre ha surgido de la comunidad, arraigada en la diáspora africana e indígena. Estudiar con maestros como Jorge Alabe, Gamo da Paz, Giovanni Hidalgo, John Santos, Malonga Casquelourd, Bongo Sidibe, Lalo Izquierdo y Baba Duru, entre otros, le ha dado a Pedro un amplio conocimiento en música de la diáspora afro. Como músico, Pedro ha grabado y tocado con artistas como Jaguar Wright, Eric Roberson, Al B Sure, Bayonics, Bebe Zahara y Olodum. Utiliza estas experiencias para su labor actual como director musical en varios proyectos. Con más de 25 años de experiencia docente en EE.UU. y en el extranjero, Pedro siempre busca aprender y crecer. Su impulso como artista y educador proviene de la creencia de que la expresión musical es una forma de sanación y poder. Pedro Gómez está comprometido a trabajar duro y transmitir tradiciones que eleven, traigan alegría y un sentido de valor a los jóvenes y sus comunidades."
         },
-        image: "https://images.unsplash.com/photo-1628690131818-da160d91367e?q=80&w=800&auto=format&fit=crop"
+        image: "https://pub-28e558b74ea64a0781531927a8b49e0e.r2.dev/Pedro-bio.jpeg"
     },
     {
         name: "Roberto Corona",
@@ -130,12 +130,226 @@ const guests: Guest[] = [
     }
 ];
 
+// GuestCard component for better UI organization
+const GuestCard = ({
+    guest,
+    onClick,
+    language,
+    lilianaLang,
+    setLilianaLang,
+    chrisLang,
+    setChrisLang
+}: {
+    guest: Guest,
+    onClick: () => void,
+    language: string,
+    lilianaLang: 'en' | 'es',
+    setLilianaLang: (lang: 'en' | 'es') => void,
+    chrisLang: 'en' | 'es',
+    setChrisLang: (lang: 'en' | 'es') => void
+}) => {
+    const handleCardClick = (e: React.MouseEvent) => {
+        // Call onClick callback with high priority
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Card component clicked directly for:', guest.name);
+        // Use setTimeout to ensure this executes after any event bubbling
+        setTimeout(() => {
+            onClick();
+        }, 0);
+    };
+
+    return (
+        <div
+            className={`bg-black/60 border ${guest.name === "Música Latina" ? "border-white" : "border-white/10"} 
+                      rounded-lg overflow-hidden transform hover:scale-105 
+                      transition-all duration-300 shadow-lg 
+                      ${guest.name === "Música Latina" ? "hover:border-white/90" : "hover:border-red-500/50"} 
+                      cursor-pointer hover:shadow-red-500/20 hover:shadow-lg active:scale-95 active:bg-red-900/20 relative`}
+            onClick={handleCardClick}
+            onMouseDown={handleCardClick}
+            tabIndex={0}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onClick();
+                }
+            }}
+        >
+            {/* Big clickable button overlay for better click targets */}
+            <button
+                className="absolute inset-0 w-full h-full z-40 opacity-0"
+                onClick={onClick}
+                aria-label={`Show ${guest.name} details`}
+            />
+
+            {/* Clickable overlay - appears on hover */}
+            <div className="absolute inset-0 bg-red-900/60 backdrop-blur-sm z-30 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                onClick={handleCardClick}>
+                <div className="text-white text-center font-bold">
+                    <div className="text-sm mb-1">CLICK TO VIEW</div>
+                    <div className="flex justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clipRule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div className="relative aspect-square w-full">
+                {guest.image ? (
+                    <>
+                        <div className="absolute inset-0 z-10 cursor-pointer" onClick={handleCardClick}></div>
+                        <div className="relative w-full h-full overflow-hidden rounded-lg">
+                            <Image
+                                src={guest.image}
+                                alt={guest.name}
+                                fill
+                                className={`${guest.name === "Música Latina" ? "opacity-30 blur-[1px]" : "opacity-70"} 
+                                      hover:opacity-100 transition-opacity rounded-lg 
+                                      ${guest.name === "Pedro Gómez" ? "object-contain" : "object-cover"}`}
+                                unoptimized={true}
+                                style={guest.name === "Pedro Gómez" ? { objectPosition: 'center 25%' } : {}}
+                            />
+                        </div>
+
+                        {/* Special overlay for Música Latina card */}
+                        {guest.name === "Música Latina" && (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center p-2 z-10 rounded-lg bg-gradient-to-br from-purple-900/50 via-red-900/60 to-black/70">
+                                <h3 className="bg-black px-4 py-2 rounded-md text-lg sm:text-xl font-black text-red-400 text-center mb-3 border border-white/20 shadow-lg underline decoration-2 underline-offset-4 transform hover:scale-105 transition-all duration-300 hover:shadow-red-500/30 hover:shadow-lg" style={{ textShadow: '2px 2px 0 #000, 0 2px 5px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.5)' }}>
+                                    MÚSICA LATINA
+                                </h3>
+                                <p className="text-white text-xs sm:text-sm font-bold text-center drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">
+                                    {guest.instrument[language as keyof typeof guest.instrument]}
+                                </p>
+
+                                {/* Click indicator */}
+                                <div className="mt-3 bg-red-500/50 px-3 py-1 rounded-full text-white text-xs animate-pulse">
+                                    Click for details
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Language toggle for Liliana Herrera's card */}
+                        {guest.name === "Liliana Herrera" && (
+                            <div className="absolute top-2 right-2 z-50">
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setLilianaLang(lilianaLang === 'en' ? 'es' : 'en');
+                                    }}
+                                    className="bg-black/70 hover:bg-red-900/70 text-white rounded-md px-2 py-1 text-xs shadow-lg border border-white/20 transition-all duration-200"
+                                    title={lilianaLang === 'en' ? 'Cambiar a Español' : 'Switch to English'}
+                                >
+                                    {lilianaLang === 'en' ? 'Español' : 'English'}
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Language toggle for Chris Trinidad's card */}
+                        {guest.name === "Chris Trinidad" && (
+                            <div className="absolute top-2 right-2 z-50">
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setChrisLang(chrisLang === 'en' ? 'es' : 'en');
+                                    }}
+                                    className="bg-black/70 hover:bg-red-900/70 text-white rounded-md px-2 py-1 text-xs shadow-lg border border-white/20 transition-all duration-200"
+                                    title={chrisLang === 'en' ? 'Cambiar a Español' : 'Switch to English'}
+                                >
+                                    {chrisLang === 'en' ? 'Español' : 'English'}
+                                </button>
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
+                        <span className="text-3xl text-red-500/70">♫</span>
+                    </div>
+                )}
+            </div>
+
+            {/* Show card text info with special handling for Liliana */}
+            {guest.name !== "Música Latina" && (
+                <div className="p-3 text-center">
+                    <h3 className="text-sm font-bold text-white">{guest.name}</h3>
+                    {guest.name === "Liliana Herrera" ? (
+                        <div className="flex flex-col items-center">
+                            <p className="text-xs text-red-400/80">
+                                {guest.instrument[lilianaLang]}
+                            </p>
+                        </div>
+                    ) : guest.name === "Chris Trinidad" ? (
+                        <div className="flex flex-col items-center">
+                            <p className="text-xs text-red-400/80">
+                                {guest.instrument[chrisLang]}
+                            </p>
+                        </div>
+                    ) : (
+                        <p className="text-xs text-red-400/80">{guest.instrument[language as keyof typeof guest.instrument]}</p>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
+
 export default function SpecialGuests() {
     const { t, language } = useLanguage();
     const [featuredGuestIndex, setFeaturedGuestIndex] = useState(0);
     const [currentWeek, setCurrentWeek] = useState(1);
     const [lilianaLang, setLilianaLang] = useState<'en' | 'es'>('en');
     const [chrisLang, setChrisLang] = useState<'en' | 'es'>('en'); // Add toggle state for Chris's card
+    const sectionRef = useRef<HTMLDivElement>(null); // Add ref for scrolling
+    const [clickIndicator, setClickIndicator] = useState('');
+
+    // Add custom scrollbar styles
+    useEffect(() => {
+        if (typeof document !== 'undefined') {
+            const styleEl = document.createElement('style');
+            styleEl.innerHTML = `
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 6px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: rgba(0, 0, 0, 0.2);
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: rgba(220, 38, 38, 0.5);
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: rgba(220, 38, 38, 0.8);
+                }
+            `;
+            document.head.appendChild(styleEl);
+            return () => {
+                document.head.removeChild(styleEl);
+            };
+        }
+    }, []);
+
+    // Function to handle guest change with smooth scrolling
+    const changeGuest = (newIndex: number) => {
+        console.log('changeGuest called with index:', newIndex);
+
+        // Show click indicator
+        setClickIndicator(`Changing to guest: ${guests[newIndex].name}`);
+
+        // Force the update regardless of current index
+        setFeaturedGuestIndex(newIndex);
+        setCurrentWeek(newIndex + 1);
+
+        // Scroll to the section
+        setTimeout(() => {
+            if (sectionRef.current) {
+                sectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            // Clear indicator after a delay
+            setTimeout(() => setClickIndicator(''), 2000);
+        }, 50);
+    };
 
     // We'll just use a fixed week number (always week 1) instead of calculating based on date
     useEffect(() => {
@@ -151,8 +365,8 @@ export default function SpecialGuests() {
             if (weekParam) {
                 const week = parseInt(weekParam);
                 if (!isNaN(week) && week >= 1 && week <= guests.length) {
-                    setCurrentWeek(week);
                     setFeaturedGuestIndex(week - 1);
+                    setCurrentWeek(week);
                 }
             }
         }
@@ -202,7 +416,7 @@ export default function SpecialGuests() {
                     <p className="text-gray-300 text-lg leading-relaxed">
                         {guest.bio?.[lilianaLang]}
                     </p>
-                    <div className="mt-4 flex justify-end">
+                    <div className="mt-4">
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -221,7 +435,7 @@ export default function SpecialGuests() {
                     <p className="text-gray-300 text-lg leading-relaxed">
                         {guest.bio?.[chrisLang]}
                     </p>
-                    <div className="mt-4 flex justify-end">
+                    <div className="mt-4">
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -280,15 +494,39 @@ export default function SpecialGuests() {
         }
     };
 
-    // Get the featured guest
-    const featuredGuest = guests[featuredGuestIndex];
+    // Get the featured guest - adding extra logging to debug
+    const currentIndex = featuredGuestIndex;
+    const featuredGuest = guests[currentIndex];
 
     // Get the remaining guests (excluding the featured one)
-    const remainingGuests = guests.filter((_, index) => index !== featuredGuestIndex);
+    const remainingGuests = guests.filter((_, index) => index !== currentIndex);
+
+    // Add effect to log whenever featuredGuestIndex changes
+    useEffect(() => {
+        // Log the featured guest image URL for debugging
+        console.log('Featured guest changed to:', guests[featuredGuestIndex].name);
+        console.log('Image URL:', guests[featuredGuestIndex].image);
+    }, [featuredGuestIndex]);
+
+    // Debug function to track card clicks
+    const handleGuestCardClick = (guestName: string) => {
+        console.log(`Card clicked for guest: ${guestName}`);
+        const guestIndex = guests.findIndex(g => g.name === guestName);
+        if (guestIndex !== -1) {
+            console.log(`Found guest at index ${guestIndex}, changing featured guest`);
+            // Force a synchronous update
+            changeGuest(guestIndex);
+        }
+    };
 
     return (
-        <div className="bg-gradient-to-r from-black via-red-900/10 to-black py-16">
+        <div className="bg-gradient-to-r from-black via-red-900/10 to-black py-16" ref={sectionRef}>
             <div className="container mx-auto px-4">
+                {clickIndicator && (
+                    <div className="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-pulse">
+                        {clickIndicator}
+                    </div>
+                )}
                 <div className="text-center mb-12">
                     <h2 className="text-4xl md:text-5xl font-black text-white uppercase mb-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
                         <span className="text-red-500 mr-2">•</span>
@@ -311,18 +549,29 @@ export default function SpecialGuests() {
                         </h3>
                     </div>
 
-                    <div className="bg-gradient-to-br from-black/80 to-red-900/20 rounded-xl overflow-hidden border-2 border-red-500/30 shadow-2xl">
+                    <div className="bg-gradient-to-br from-black/80 to-red-900/20 rounded-xl overflow-hidden border-2 border-red-500/30 shadow-2xl relative">
+                        {/* Featured badge */}
+                        <div className="absolute top-0 left-0 bg-red-500 text-white py-2 px-6 z-10 rounded-br-xl shadow-lg transform rotate-0 font-bold">
+                            {t("special.guests.featured")}
+                        </div>
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
-                            {/* Featured Guest Image - Made exactly square */}
-                            <div className="relative aspect-square w-full">
+                            {/* Featured Guest Image - Made exactly square with consistent frame */}
+                            <div className="relative h-[450px] md:h-[500px] lg:h-[550px] overflow-hidden rounded-2xl border-4 border-red-500/30 bg-black/70 shadow-lg">
+                                <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-transparent to-red-900/20 z-10 rounded-xl pointer-events-none"></div>
                                 {featuredGuest.image ? (
-                                    <Image
-                                        src={featuredGuest.image}
-                                        alt={featuredGuest.name}
-                                        fill
-                                        className="object-cover"
-                                        unoptimized={true}
-                                    />
+                                    <div className="relative w-full h-full overflow-hidden rounded-xl">
+                                        <Image
+                                            key={`featured-image-${featuredGuest.name}`}
+                                            src={featuredGuest.image}
+                                            alt={featuredGuest.name}
+                                            fill
+                                            className={`${featuredGuest.name === "Pedro Gómez" ? "object-contain" : "object-cover"}`}
+                                            unoptimized={true}
+                                            style={featuredGuest.name === "Pedro Gómez" ? { objectPosition: 'center 25%' } : {}}
+                                            priority={true}
+                                        />
+                                    </div>
                                 ) : (
                                     <div className="absolute inset-0 bg-gradient-to-br from-red-900/60 to-black flex items-center justify-center">
                                         <span className="text-8xl text-red-500">♫</span>
@@ -336,7 +585,7 @@ export default function SpecialGuests() {
                             </div>
 
                             {/* Featured Guest Info - Better balanced layout */}
-                            <div className="p-6 sm:p-8 md:p-10 flex flex-col justify-center bg-black/40">
+                            <div className="p-6 sm:p-8 md:p-10 flex flex-col justify-center bg-black/40 h-[450px] md:h-[500px] lg:h-[550px] overflow-y-auto">
                                 {/* Desktop-only name and instrument */}
                                 <div className="hidden md:block">
                                     <h3 className="text-4xl font-black text-white mb-2">{featuredGuest.name}</h3>
@@ -345,33 +594,66 @@ export default function SpecialGuests() {
                                 </div>
 
                                 <div className="space-y-4">
-                                    {displayBio(featuredGuest)}
+                                    <div className="h-[200px] md:h-[250px] overflow-y-auto pr-2 custom-scrollbar">
+                                        {displayBio(featuredGuest)}
+                                    </div>
                                     <p className="text-white/80 italic text-lg">
                                         {t("special.guests.joining")} Francisco Herrera {t("special.guests.forConcert")}
                                     </p>
                                 </div>
 
-                                {/* Week navigation controls */}
+                                {/* Enhanced week navigation controls */}
                                 <div className="mt-8 flex justify-between">
                                     <button
                                         onClick={() => {
                                             const newIndex = (featuredGuestIndex - 1 + guests.length) % guests.length;
-                                            setFeaturedGuestIndex(newIndex);
-                                            setCurrentWeek(newIndex + 1);
+                                            console.log("PREVIOUS button clicked - changing to index:", newIndex);
+                                            changeGuest(newIndex);
                                         }}
-                                        className="text-red-400 hover:text-red-300 transition-colors text-sm flex items-center"
+                                        onMouseDown={() => {
+                                            const newIndex = (featuredGuestIndex - 1 + guests.length) % guests.length;
+                                            console.log("PREVIOUS button mouse down - changing to index:", newIndex);
+                                            changeGuest(newIndex);
+                                        }}
+                                        className="bg-red-900/30 hover:bg-red-900/50 text-red-400 hover:text-white transition-colors px-4 py-2 rounded-lg flex items-center space-x-2 border border-red-500/30 hover:border-red-500/60 group relative"
+                                        aria-label={t("special.guests.previous")}
                                     >
-                                        ← {t("special.guests.previous")}
+                                        <span className="transform transition-transform group-hover:-translate-x-1">←</span>
+                                        <span>{t("special.guests.previous")}</span>
+
+                                        {/* Preview indicator - shows on hover */}
+                                        <div className="absolute bottom-full left-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/80 rounded p-1 shadow-lg">
+                                            <div className="text-xs text-white">{guests[(featuredGuestIndex - 1 + guests.length) % guests.length].name}</div>
+                                        </div>
                                     </button>
+
+                                    <div className="flex items-center text-white/30">
+                                        <span className="text-xs">
+                                            {currentWeek} / {guests.length}
+                                        </span>
+                                    </div>
+
                                     <button
                                         onClick={() => {
                                             const newIndex = (featuredGuestIndex + 1) % guests.length;
-                                            setFeaturedGuestIndex(newIndex);
-                                            setCurrentWeek(newIndex + 1);
+                                            console.log("NEXT button clicked - changing to index:", newIndex);
+                                            changeGuest(newIndex);
                                         }}
-                                        className="text-red-400 hover:text-red-300 transition-colors text-sm flex items-center"
+                                        onMouseDown={() => {
+                                            const newIndex = (featuredGuestIndex + 1) % guests.length;
+                                            console.log("NEXT button mouse down - changing to index:", newIndex);
+                                            changeGuest(newIndex);
+                                        }}
+                                        className="bg-red-900/30 hover:bg-red-900/50 text-red-400 hover:text-white transition-colors px-4 py-2 rounded-lg flex items-center space-x-2 border border-red-500/30 hover:border-red-500/60 group relative"
+                                        aria-label={t("special.guests.next")}
                                     >
-                                        {t("special.guests.next")} →
+                                        <span>{t("special.guests.next")}</span>
+                                        <span className="transform transition-transform group-hover:translate-x-1">→</span>
+
+                                        {/* Preview indicator - shows on hover */}
+                                        <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/80 rounded p-1 shadow-lg">
+                                            <div className="text-xs text-white">{guests[(featuredGuestIndex + 1) % guests.length].name}</div>
+                                        </div>
                                     </button>
                                 </div>
                             </div>
@@ -388,103 +670,36 @@ export default function SpecialGuests() {
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                        {remainingGuests.map((guest, index) => (
-                            <div
-                                key={index}
-                                className={`bg-black/60 border ${guest.name === "Música Latina" ? "border-white" : "border-white/10"} rounded-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 shadow-lg ${guest.name === "Música Latina" ? "hover:border-white/90" : "hover:border-red-500/30"} cursor-pointer`}
-                                onClick={() => {
-                                    const guestIndex = guests.findIndex(g => g.name === guest.name);
-                                    if (guestIndex !== -1) {
-                                        setFeaturedGuestIndex(guestIndex);
-                                        setCurrentWeek(guestIndex + 1);
-                                    }
-                                }}
-                            >
-                                <div className="relative aspect-square w-full">
-                                    {guest.image ? (
-                                        <>
-                                            <Image
-                                                src={guest.image}
-                                                alt={guest.name}
-                                                fill
-                                                className={`object-cover ${guest.name === "Música Latina" ? "opacity-30 blur-[1px]" : "opacity-70"} hover:opacity-100 transition-opacity rounded-lg`}
-                                                unoptimized={true}
-                                            />
-
-                                            {/* Special overlay for Música Latina card */}
-                                            {guest.name === "Música Latina" && (
-                                                <div className="absolute inset-0 flex flex-col items-center justify-center p-2 z-10 rounded-lg bg-gradient-to-br from-purple-900/50 via-red-900/60 to-black/70">
-                                                    <h3 className="bg-black px-4 py-2 rounded-md text-lg sm:text-xl font-black text-red-400 text-center mb-3 border border-white/20 shadow-lg underline decoration-2 underline-offset-4 transform hover:scale-105 transition-all duration-300 hover:shadow-red-500/30 hover:shadow-lg" style={{ textShadow: '2px 2px 0 #000, 0 2px 5px rgba(0,0,0,0.9), 0 4px 8px rgba(0,0,0,0.5)' }}>
-                                                        MÚSICA LATINA
-                                                    </h3>
-                                                    <p className="text-white text-xs sm:text-sm font-bold text-center drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">
-                                                        {guest.instrument[language]}
-                                                    </p>
-                                                </div>
-                                            )}
-
-                                            {/* Language toggle for Liliana Herrera's card */}
-                                            {guest.name === "Liliana Herrera" && (
-                                                <div className="absolute top-2 right-2 z-20">
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setLilianaLang(lilianaLang === 'en' ? 'es' : 'en');
-                                                        }}
-                                                        className="bg-black/70 hover:bg-red-900/70 text-white rounded-md px-2 py-1 text-xs shadow-lg border border-white/20 transition-all duration-200"
-                                                        title={lilianaLang === 'en' ? 'Cambiar a Español' : 'Switch to English'}
-                                                    >
-                                                        {lilianaLang === 'en' ? 'Español' : 'English'}
-                                                    </button>
-                                                </div>
-                                            )}
-
-                                            {/* Language toggle for Chris Trinidad's card */}
-                                            {guest.name === "Chris Trinidad" && (
-                                                <div className="absolute top-2 right-2 z-20">
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setChrisLang(chrisLang === 'en' ? 'es' : 'en');
-                                                        }}
-                                                        className="bg-black/70 hover:bg-red-900/70 text-white rounded-md px-2 py-1 text-xs shadow-lg border border-white/20 transition-all duration-200"
-                                                        title={chrisLang === 'en' ? 'Cambiar a Español' : 'Switch to English'}
-                                                    >
-                                                        {chrisLang === 'en' ? 'Español' : 'English'}
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </>
-                                    ) : (
-                                        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
-                                            <span className="text-3xl text-red-500/70">♫</span>
-                                        </div>
-                                    )}
+                        {remainingGuests.map((guest, index) => {
+                            const guestIndex = guests.findIndex(g => g.name === guest.name);
+                            return (
+                                <div
+                                    key={index}
+                                    onClick={() => {
+                                        console.log(`Direct div click for ${guest.name} at index ${guestIndex}`);
+                                        changeGuest(guestIndex);
+                                    }}
+                                    onMouseDown={() => {
+                                        console.log(`Direct div mouse down for ${guest.name} at index ${guestIndex}`);
+                                        changeGuest(guestIndex);
+                                    }}
+                                    className="cursor-pointer hover:scale-105 transform transition-all duration-300"
+                                >
+                                    <GuestCard
+                                        guest={guest}
+                                        onClick={() => {
+                                            console.log(`GuestCard onClick callback for ${guest.name}`);
+                                            changeGuest(guestIndex);
+                                        }}
+                                        language={language}
+                                        lilianaLang={lilianaLang}
+                                        setLilianaLang={setLilianaLang}
+                                        chrisLang={chrisLang}
+                                        setChrisLang={setChrisLang}
+                                    />
                                 </div>
-
-                                {/* Show card text info with special handling for Liliana */}
-                                {guest.name !== "Música Latina" && (
-                                    <div className="p-3 text-center">
-                                        <h3 className="text-sm font-bold text-white">{guest.name}</h3>
-                                        {guest.name === "Liliana Herrera" ? (
-                                            <div className="flex flex-col items-center">
-                                                <p className="text-xs text-red-400/80">
-                                                    {guest.instrument[lilianaLang]}
-                                                </p>
-                                            </div>
-                                        ) : guest.name === "Chris Trinidad" ? (
-                                            <div className="flex flex-col items-center">
-                                                <p className="text-xs text-red-400/80">
-                                                    {guest.instrument[chrisLang]}
-                                                </p>
-                                            </div>
-                                        ) : (
-                                            <p className="text-xs text-red-400/80">{guest.instrument[language]}</p>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
             </div>

@@ -124,6 +124,7 @@ html {
   scroll-padding-top: 20px; /* Adds default padding to all anchor scrolling */
   height: 100%;
   overflow-x: hidden; /* Prevent horizontal scroll */
+  margin-right: calc(100vw - 100%);
 }
 
 /* Fix for mobile browsers inconsistent height calculations */
@@ -214,24 +215,42 @@ html {
 /* SVG Wave animation */
 @keyframes waveLine {
   0% {
-    d: path(
-      "M0,15 Q5,5 10,15 Q15,25 20,15 Q25,5 30,15 Q35,25 40,15 Q45,5 50,15 Q55,25 60,15 Q65,5 70,15 Q75,25 80,15 Q85,5 90,15 Q95,25 100,15"
-    );
+    transform: scaleY(1);
   }
   50% {
-    d: path(
-      "M0,15 Q5,25 10,15 Q15,5 20,15 Q25,25 30,15 Q35,5 40,15 Q45,25 50,15 Q55,5 60,15 Q65,25 70,15 Q75,5 80,15 Q85,25 90,15 Q95,5 100,15"
-    );
+    transform: scaleY(1.5);
   }
   100% {
-    d: path(
-      "M0,15 Q5,5 10,15 Q15,25 20,15 Q25,5 30,15 Q35,25 40,15 Q45,5 50,15 Q55,25 60,15 Q65,5 70,15 Q75,25 80,15 Q85,5 90,15 Q95,5 100,15"
-    );
+    transform: scaleY(1);
   }
 }
 
 .animate-waveline {
   animation: waveLine 3s infinite ease-in-out;
+}
+
+/* Add these classes for Safari-compatible wave animations */
+.wave-path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  stroke-linecap: round;
+  transform-origin: center;
+}
+
+.wave-container {
+  overflow: hidden;
+  position: relative;
+}
+
+.wave-element {
+  display: inline-block;
+  height: 100%;
+  width: 10px;
+  margin-right: 3px;
+  border-radius: 3px;
+  animation: waveLine 3s infinite ease-in-out;
+  transform-origin: center bottom;
 }
 
 /* Sound wave animations for music player buttons */
@@ -414,4 +433,31 @@ html {
     min-height: 0 !important;
     max-height: 120px !important; /* Limit maximum height */
   }
+}
+
+/* Fix for layout shifts during navigation */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+/* Improve transition smoothness */
+a,
+button {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Ensure smooth animations */
+* {
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
 }

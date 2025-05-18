@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, use } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import { useMusic } from '@/context/MusicContext';
 import LanguageToggle from './LanguageToggle';
@@ -53,6 +53,7 @@ export default function Navigation() {
     const [menuOpen, setMenuOpen] = useState(false);
     const { t, language } = useLanguage();
     const pathname = usePathname();
+    const router = useRouter();
     const [activeTab, setActiveTab] = useState<string | null>(null);
     const menuButtonRef = useRef<HTMLButtonElement>(null);
     const [touchFeedback, setTouchFeedback] = useState<string | null>(null);
@@ -142,16 +143,14 @@ export default function Navigation() {
             navigator.vibrate([50, 30, 50]); // Pattern for navigation feedback
         }
 
-        // Use timeout to ensure visual feedback is shown before navigation
-        setTimeout(() => {
-            window.location.href = path;
-            setTouchFeedback(null); // Reset feedback state
+        // Use router.push for client-side navigation instead of window.location
+        router.push(path);
 
-            // Reset navigation flag after a longer timeout to prevent rapid tapping issues
-            setTimeout(() => {
-                setIsNavigating(false);
-            }, 500);
-        }, 100);
+        // Reset navigation flag after a timeout
+        setTimeout(() => {
+            setTouchFeedback(null); // Reset feedback state
+            setIsNavigating(false);
+        }, 300);
     };
 
     return (
@@ -161,7 +160,11 @@ export default function Navigation() {
                 <div className="flex items-center justify-between h-20 sm:h-28 py-2 sm:py-6">
                     {/* Logo section - made smaller on mobile */}
                     <div className="flex-shrink-0 flex items-center">
-                        <Link href="/" className="flex items-center space-x-2 sm:space-x-4 group" onClick={handleLogoClick}>
+                        <Link href="/" className="flex items-center space-x-2 sm:space-x-4 group" onClick={(e) => {
+                            e.preventDefault();
+                            handleLogoClick();
+                            navigateTo("/");
+                        }}>
                             <span className="text-red-500 text-xl sm:text-3xl font-bold bg-black/40 rounded-full w-8 h-8 sm:w-14 sm:h-14 flex items-center justify-center transform group-hover:scale-110 transition-transform shadow-lg shadow-red-500/20 border border-red-500/30 relative before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-br before:from-red-400 before:to-red-600 before:opacity-30 before:blur-sm">
                                 <span className="relative z-10 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">♫</span>
                             </span>
@@ -199,7 +202,7 @@ export default function Navigation() {
                                         ? "bg-gradient-to-r from-red-600 to-red-500 text-white shadow-[0_5px_0_rgb(127,29,29)] hover:shadow-[0_3px_0_rgb(127,29,29)] active:shadow-none active:translate-y-1"
                                         : "text-gray-200 hover:bg-white/5 hover:text-white shadow-[0_3px_0_rgba(255,255,255,0.1)] hover:shadow-[0_5px_0_rgba(255,255,255,0.05)]"
                                         }`}
-                                    onClick={() => handleTabClick(item.href)}
+                                    onClick={() => navigateTo(item.href)}
                                 >
                                     <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">{t(item.translationKey)}</span>
                                 </Link>
@@ -214,7 +217,7 @@ export default function Navigation() {
                                     whiteSpace: 'nowrap',
                                     minWidth: language === 'es' ? '210px' : '160px'
                                 }}
-                                onClick={() => handleTabClick("/tickets")}
+                                onClick={() => navigateTo("/tickets")}
                             >
                                 <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">{t("buy tickets")}</span>
                             </Link>
@@ -225,7 +228,7 @@ export default function Navigation() {
                                     ? "bg-gradient-to-r from-red-600 to-red-500 text-white shadow-[0_5px_0_rgb(127,29,29)] hover:shadow-[0_3px_0_rgb(127,29,29)] active:shadow-none active:translate-y-1"
                                     : "text-gray-200 hover:bg-white/5 hover:text-white shadow-[0_3px_0_rgba(255,255,255,0.1)] hover:shadow-[0_5px_0_rgba(255,255,255,0.05)]"
                                     }`}
-                                onClick={() => handleTabClick("/contact")}
+                                onClick={() => navigateTo("/contact")}
                             >
                                 <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">{t("contact")}</span>
                             </Link>

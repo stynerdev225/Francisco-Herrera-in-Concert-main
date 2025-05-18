@@ -63,26 +63,35 @@ export default function Contact() {
                 }}
               >
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-white/80">Your Name</label>
+                  <label htmlFor="name" className="block text-sm font-medium mb-2 text-white/80">Your Name</label>
                   <input
+                    id="name"
+                    name="name"
                     type="text"
+                    placeholder="Enter your name"
                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-white/80">Email Address</label>
+                  <label htmlFor="email" className="block text-sm font-medium mb-2 text-white/80">Email Address</label>
                   <input
+                    id="email"
+                    name="email"
                     type="email"
+                    placeholder="Enter your email address"
                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-white/80">Your Message</label>
+                  <label htmlFor="message" className="block text-sm font-medium mb-2 text-white/80">Your Message</label>
                   <textarea
+                    id="message"
+                    name="message"
+                    placeholder="Enter your message here"
                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white h-40 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
                     required
                   />

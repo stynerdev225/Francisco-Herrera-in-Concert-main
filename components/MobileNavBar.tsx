@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import { useMusic } from '@/context/MusicContext';
 import { useIsMobile } from '@/components/ui/use-mobile';
@@ -11,6 +12,9 @@ export default function MobileNavBar() {
     const { language } = useLanguage();
     const { isPlaying, toggleMusic } = useMusic();
     const isMobile = useIsMobile();
+    const router = useRouter();
+    const [isNavigating, setIsNavigating] = useState(false);
+    const [touchFeedback, setTouchFeedback] = useState<string | null>(null);
 
     // Close menu when clicking outside
     useEffect(() => {
@@ -24,6 +28,30 @@ export default function MobileNavBar() {
         document.addEventListener('click', handleClickOutside);
         return () => document.removeEventListener('click', handleClickOutside);
     }, [menuOpen]);
+
+    // Enhanced navigation function with touch feedback and navigation protection
+    const navigateTo = (path: string, event?: React.MouseEvent) => {
+        if (event) event.preventDefault();
+        if (isNavigating) return; // Prevent multiple rapid taps
+
+        setIsNavigating(true); // Set navigating flag
+        setTouchFeedback(path); // Set visual feedback
+        setMenuOpen(false);
+
+        // Add haptic feedback for better mobile experience
+        if (navigator.vibrate) {
+            navigator.vibrate([50, 30, 50]);
+        }
+
+        // Use router.push for client-side navigation
+        router.push(path);
+
+        // Reset navigation flag after timeout
+        setTimeout(() => {
+            setTouchFeedback(null);
+            setIsNavigating(false);
+        }, 300);
+    };
 
     // Don't render anything on non-mobile devices
     if (!isMobile) {
@@ -46,7 +74,11 @@ export default function MobileNavBar() {
             <div className="fixed top-0 left-0 right-0 bg-black/80 backdrop-blur-sm border-b border-red-500/30 shadow-lg z-50 md:hidden">
                 <div className="flex justify-between items-center h-16 px-3">
                     {/* Logo */}
-                    <a href="/" className="flex items-center">
+                    <a
+                        href="/"
+                        className="flex items-center"
+                        onClick={(e) => navigateTo("/", e)}
+                    >
                         <span className="text-red-500 text-xl font-bold bg-black/40 rounded-full w-8 h-8 flex items-center justify-center mr-2">♫</span>
                         <span className="font-black text-sm">
                             <span className="text-red-500">F.</span>
@@ -131,32 +163,35 @@ export default function MobileNavBar() {
                         <div className="py-3 px-2">
                             <a
                                 href="/"
-                                className="block px-3 py-2.5 rounded-lg text-white text-sm font-medium hover:bg-red-600/20"
-                                onClick={() => setMenuOpen(false)}
+                                className={`block px-3 py-2.5 rounded-lg text-white text-sm font-medium hover:bg-red-600/20 ${touchFeedback === '/' ? 'bg-red-600/10' : ''}`}
+                                onClick={(e) => navigateTo("/", e)}
                                 style={{ WebkitTapHighlightColor: 'transparent' }}
                             >
                                 {labels.home}
                             </a>
                             <a
                                 href="/sections/music"
-                                className="block px-3 py-2.5 rounded-lg text-white text-sm font-medium hover:bg-red-600/20 mt-1"
-                                onClick={() => setMenuOpen(false)}
+                                className={`block px-3 py-2.5 rounded-lg text-white text-sm font-medium hover:bg-red-600/20 mt-1 ${touchFeedback === '/sections/music' ? 'bg-red-600/10' : ''}`}
+                                onClick={(e) => navigateTo("/sections/music", e)}
                                 style={{ WebkitTapHighlightColor: 'transparent' }}
                             >
                                 {labels.music}
                             </a>
                             <a
                                 href="/tickets"
-                                className="block px-3 py-2.5 rounded-lg text-white text-sm font-medium bg-gradient-to-r from-red-600 to-red-500 mt-1"
-                                onClick={() => setMenuOpen(false)}
-                                style={{ WebkitTapHighlightColor: 'transparent' }}
+                                className={`block px-3 py-2.5 rounded-lg text-white text-sm font-medium bg-gradient-to-r from-red-600 to-red-500 mt-1 ${touchFeedback === '/tickets' ? 'opacity-90' : ''}`}
+                                onClick={(e) => navigateTo("/tickets", e)}
+                                style={{
+                                    WebkitTapHighlightColor: 'transparent',
+                                    touchAction: 'manipulation'
+                                }}
                             >
                                 {labels.buyTickets}
                             </a>
                             <a
                                 href="/contact"
-                                className="block px-3 py-2.5 rounded-lg text-white text-sm font-medium hover:bg-red-600/20 mt-1"
-                                onClick={() => setMenuOpen(false)}
+                                className={`block px-3 py-2.5 rounded-lg text-white text-sm font-medium hover:bg-red-600/20 mt-1 ${touchFeedback === '/contact' ? 'bg-red-600/10' : ''}`}
+                                onClick={(e) => navigateTo("/contact", e)}
                                 style={{ WebkitTapHighlightColor: 'transparent' }}
                             >
                                 {labels.contact}
@@ -166,13 +201,18 @@ export default function MobileNavBar() {
                 </>
             )}
 
-            {/* Add minimal padding to the top of the page */}
+            {/* Add CSS for touch feedback */}
             <style jsx global>{`
                 @media (max-width: 767px) {
                     /* Only add a tiny bit of padding to avoid layout issues */
                     body {
                         padding-top: 12px;
                     }
+                }
+                
+                /* Prevent double-tap zooming on navigation items */
+                a, button {
+                    touch-action: manipulation;
                 }
             `}</style>
         </>

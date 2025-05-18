@@ -5,7 +5,7 @@ import { Facebook, Instagram, Youtube, Linkedin, MapPin, Calendar, Clock } from 
 
 export default function Footer() {
   return (
-    <footer className="bg-black text-white py-8 md:py-10 relative">
+    <footer className="bg-black text-white py-8 md:py-10 w-full relative mt-auto">
       <div className="container mx-auto px-4">
         {/* Top section with columns - Mobile responsive */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-8 mb-8">

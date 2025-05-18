@@ -15,6 +15,8 @@ import HeroSection from "@/components/hero-section"
 const Navigation = dynamic(() => import("@/components/Navigation"), { ssr: false })
 // Import our new mobile-only navigation
 const MobileNavBar = dynamic(() => import("@/components/MobileNavBar"), { ssr: false })
+const PageTransition = dynamic(() => import("@/components/PageTransition"), { ssr: false })
+const NavigationProgress = dynamic(() => import("@/components/NavigationProgress"), { ssr: false })
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -52,12 +54,17 @@ export default function RootLayout({
 }): React.JSX.Element {
   return (
     <html lang="en" className={inter.className} suppressHydrationWarning>
-      <body className="overflow-x-hidden">
+      <body className="flex flex-col min-h-screen overflow-x-hidden">
         <LanguageProvider>
           <MusicProvider>
             <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+              <NavigationProgress />
               <Navigation />
-              {children}
+              <div className="flex-1 flex flex-col">
+                <PageTransition>
+                  {children}
+                </PageTransition>
+              </div>
               <Footer />
               <BackgroundMusic />
               {/* Add our mobile-only navbar here - it will automatically only show on mobile */}

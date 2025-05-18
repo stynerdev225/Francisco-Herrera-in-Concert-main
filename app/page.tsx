@@ -12,7 +12,7 @@ const MarketingSection = dynamic(() => import('@/components/marketing-section'),
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col move-together">
+    <main className="flex flex-col w-full move-together">
       <HeroSection />
       <RotatingBanner />
       <BuyTicketsSection />
