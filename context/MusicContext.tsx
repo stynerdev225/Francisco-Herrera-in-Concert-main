@@ -45,26 +45,30 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
     const autoplayRetryCount = useRef(0);
     const visibilityChangeListenerAdded = useRef(false);
 
-    // Available song snippets - updated paths to match the actual file locations in public/music/snippets
-    const songSnippets = [
+    // Main song tracks - full versions with fallbacks
+    const songTracks = [
+        "/music/snippets/nuevo-sol.mp4",
+        "/music/snippets/saber-ante-la-migra.mp4"
+    ];
+
+    // Snippet versions as fallbacks
+    const snippetTracks = [
         "/music/snippets/nuevo-sol-snippet1.mp4",
-        "/music/snippets/nuevo-sol-snippet2.mp4",
-        "/music/snippets/saber-migra-snippet1.mp4",
-        "/music/snippets/saber-migra-snippet2.mp4"
+        "/music/snippets/saber-migra-snippet1.mp4"
     ];
 
     // Get song title from the filename
     const getSongTitle = (songPath: string) => {
         if (!songPath) return 'Music';
 
-        if (songPath.includes('nuevo-sol-snippet1')) {
-            return 'Nuevo Sol (Part 1)';
-        } else if (songPath.includes('nuevo-sol-snippet2')) {
-            return 'Nuevo Sol (Part 2)';
-        } else if (songPath.includes('saber-migra-snippet1')) {
-            return 'Saber Migra (Part 1)';
-        } else if (songPath.includes('saber-migra-snippet2')) {
-            return 'Saber Migra (Part 2)';
+        if (songPath.includes('nuevo-sol.mp4')) {
+            return 'Nuevo Sol';
+        } else if (songPath.includes('saber-ante-la-migra.mp4')) {
+            return 'Saber ante la Migra';
+        } else if (songPath.includes('nuevo-sol-snippet')) {
+            return 'Nuevo Sol (Sample)';
+        } else if (songPath.includes('saber-migra-snippet')) {
+            return 'Saber ante la Migra (Sample)';
         } else if (songPath.includes('background-music.mp3')) {
             return 'Background Music';
         }
@@ -76,7 +80,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
     const saveCurrentSongState = (songPath: string) => {
         if (typeof window === 'undefined' || !songPath) return;
 
-        const currentIndex = songSnippets.findIndex(song => song === songPath);
+        const currentIndex = songTracks.findIndex(song => song === songPath);
         if (currentIndex >= 0) {
             localStorage.setItem(MUSIC_CURRENT_SONG, songPath);
             localStorage.setItem(MUSIC_LAST_POSITION, currentIndex.toString());
@@ -93,29 +97,29 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
         // If we have a saved position, use that
         if (savedPosition) {
             const position = parseInt(savedPosition);
-            if (!isNaN(position) && position >= 0 && position < songSnippets.length) {
+            if (!isNaN(position) && position >= 0 && position < songTracks.length) {
                 return position;
             }
         }
 
         // If we have a saved song but no position, find the song
         if (savedSong) {
-            const position = songSnippets.findIndex(song => song === savedSong);
+            const position = songTracks.findIndex(song => song === savedSong);
             if (position >= 0) {
                 return position;
             }
         }
 
-        // Default to a random song
-        return Math.floor(Math.random() * songSnippets.length);
+        // Default to first song
+        return 0;
     };
 
     // Function to play next song with improved error handling
     const playNextSong = (audioElement: HTMLAudioElement) => {
         try {
-            const currentIndex = songSnippets.findIndex(song => song === currentSong);
-            const nextIndex = (currentIndex + 1) % songSnippets.length;
-            const nextSong = songSnippets[nextIndex];
+            const currentIndex = songTracks.findIndex(song => song === currentSong);
+            const nextIndex = (currentIndex + 1) % songTracks.length;
+            const nextSong = songTracks[nextIndex];
 
             console.log(`Playing next song (${nextIndex}):`, nextSong);
             setCurrentSong(nextSong);
@@ -223,16 +227,19 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
 
             // Get the starting song position based on previous sessions
             const songIndex = loadPreviousSongPosition();
-            const initialSong = songSnippets[songIndex];
+            const initialSong = songTracks[songIndex];
 
             console.log("Initializing with song path:", initialSong);
 
             // Set audio properties
             audio.src = initialSong;
-            audio.preload = "auto";
+            audio.preload = "metadata"; // Change to metadata for faster loading
             audio.volume = volume;
             audio.muted = false; // Ensure not muted
             audio.loop = false;  // Don't loop, we'll handle rotation
+
+            // Force load the audio
+            audio.load();
 
             // Allow cross-origin to help with some browsers
             audio.crossOrigin = "anonymous";
@@ -242,21 +249,36 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
                 console.log("Audio can play through without buffering");
             };
 
-            // Add error handling for loading issues
+            // Add detailed error handling for loading issues
             audio.onerror = (e) => {
                 console.error("Audio loading error:", e);
                 console.error("Error code:", audio.error?.code);
                 console.error("Error message:", audio.error?.message);
+                console.error("Error src:", audio.src);
 
                 // Try with a different song if this one fails
-                const fallbackIndex = (songIndex + 1) % songSnippets.length;
+                const fallbackIndex = (songIndex + 1) % songTracks.length;
                 try {
-                    audio.src = songSnippets[fallbackIndex];
-                    audio.load();
-                    console.log("Trying alternate song after error:", songSnippets[fallbackIndex]);
-                    setCurrentSong(songSnippets[fallbackIndex]);
-                    setSongTitle(getSongTitle(songSnippets[fallbackIndex]));
-                    saveCurrentSongState(songSnippets[fallbackIndex]);
+                    console.log("Trying alternate song after error:", songTracks[fallbackIndex]);
+
+                    // Create a new audio element instead of reusing
+                    const newAudio = new Audio(songTracks[fallbackIndex]);
+                    newAudio.preload = "metadata";
+                    newAudio.volume = volume;
+                    newAudio.muted = false;
+                    newAudio.load();
+
+                    // Replace the old audio reference
+                    audioRef.current = newAudio;
+
+                    // Attach event listeners to new audio element
+                    attachEventListeners(newAudio);
+
+                    setCurrentSong(songTracks[fallbackIndex]);
+                    setSongTitle(getSongTitle(songTracks[fallbackIndex]));
+                    saveCurrentSongState(songTracks[fallbackIndex]);
+
+                    return newAudio;
                 } catch (fallbackError) {
                     console.error("Fallback song also failed:", fallbackError);
                 }
@@ -419,7 +441,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
         };
     }, [isPlaying, volume]);
 
-    // Toggle music function simplified without workarounds
+    // Toggle music function with better error handling
     const toggleMusic = () => {
         console.log("Toggle music called, current state:", isPlaying);
 
@@ -440,20 +462,52 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
             audio.muted = false; // Ensure not muted
             audio.volume = volume;
 
-            const playPromise = audio.play();
-            if (playPromise !== undefined) {
-                playPromise
-                    .then(() => {
-                        console.log("Playback started successfully");
-                        setIsPlaying(true);
-                        shouldAutoPlay.current = true;
-                        localStorage.setItem(MUSIC_PREF_AUTOPLAY, 'true');
-                    })
-                    .catch(error => {
-                        console.error("Play failed:", error);
-                        // Let user manually trigger playback
-                    });
-            }
+            // Check if file exists first
+            const tempAudio = new Audio(audio.src);
+            tempAudio.onerror = () => {
+                console.error("Audio file doesn't exist:", audio.src);
+                // Try an alternative file
+                if (audio.src.includes("nuevo-sol.mp4")) {
+                    audio.src = "/music/snippets/nuevo-sol-snippet1.mp4";
+                } else {
+                    audio.src = "/music/snippets/saber-migra-snippet1.mp4";
+                }
+                audio.load();
+
+                const playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise
+                        .then(() => {
+                            console.log("Playback started successfully with fallback");
+                            setIsPlaying(true);
+                            shouldAutoPlay.current = true;
+                            localStorage.setItem(MUSIC_PREF_AUTOPLAY, 'true');
+                        })
+                        .catch(error => {
+                            console.error("Play failed with fallback:", error);
+                        });
+                }
+            };
+
+            tempAudio.oncanplay = () => {
+                // Original file exists, play it
+                const playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise
+                        .then(() => {
+                            console.log("Playback started successfully");
+                            setIsPlaying(true);
+                            shouldAutoPlay.current = true;
+                            localStorage.setItem(MUSIC_PREF_AUTOPLAY, 'true');
+                        })
+                        .catch(error => {
+                            console.error("Play failed:", error);
+                        });
+                }
+            };
+
+            // Try to load the audio to see if it exists
+            tempAudio.load();
 
             return;
         }
@@ -467,6 +521,10 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
                 // setIsPlaying will be updated by the event listener
             } else {
                 console.log("Playing music");
+
+                // Force reload the audio to make sure it works
+                audioRef.current.load();
+
                 const playPromise = audioRef.current.play();
 
                 if (playPromise !== undefined) {
@@ -479,7 +537,33 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
                         })
                         .catch(error => {
                             console.error("Play failed:", error);
-                            // Let user manually trigger playback
+
+                            // Try with a different song if this one fails
+                            console.log("Trying alternate song after play failure");
+                            const currentIndex = songTracks.findIndex(song => song === currentSong);
+                            const nextIndex = (currentIndex + 1) % songTracks.length;
+                            const nextSong = songTracks[nextIndex];
+
+                            audioRef.current.src = nextSong;
+                            audioRef.current.load();
+                            setCurrentSong(nextSong);
+                            setSongTitle(getSongTitle(nextSong));
+
+                            audioRef.current.play().catch(secondError => {
+                                console.error("Second play attempt also failed:", secondError);
+
+                                // Try snippet files as fallback
+                                if (nextSong.includes("nuevo-sol.mp4")) {
+                                    audioRef.current.src = "/music/snippets/nuevo-sol-snippet1.mp4";
+                                } else {
+                                    audioRef.current.src = "/music/snippets/saber-migra-snippet1.mp4";
+                                }
+                                audioRef.current.load();
+
+                                audioRef.current.play().catch(finalError => {
+                                    console.error("All play attempts failed:", finalError);
+                                });
+                            });
                         });
                 }
             }

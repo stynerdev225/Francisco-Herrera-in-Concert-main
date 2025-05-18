@@ -3,6 +3,14 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+/* Set the default scroll behavior to auto to prevent jumps */
+html,
+body {
+  scroll-behavior: smooth;
+}
+
+/* COMPLETELY REMOVED animation-disabling code */
+
 :root {
   --foreground-rgb: 255, 255, 255;
   --background-start-rgb: 76, 29, 149;
@@ -10,17 +18,85 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-    to right,
-    rgb(var(--background-start-rgb)),
-    rgb(var(--background-end-rgb))
-  );
+  -webkit-backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  color: white;
+  background-color: black;
   height: 100%;
   overflow-x: hidden; /* Prevent horizontal scroll */
-
-  /* Fix iOS 100vh issue */
   min-height: -webkit-fill-available;
+  transform: translateZ(0);
+}
+
+/* PREVENT IMAGE FLICKER DURING GUEST CHANGES */
+body.changing-guest img {
+  opacity: 1 !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+body.changing-guest [class*="transition"] {
+  transition: none !important;
+}
+
+body.changing-guest .relative.h-\[450px\].md\:h-\[500px\].lg\:h-\[550px\] {
+  transition: none !important;
+}
+
+/* Force immediate image display */
+img[src*="pub-28e558b74ea64a0781531927a8b49e0e.r2.dev"],
+img[src*="unsplash.com"] {
+  opacity: 1 !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+/* FIX ALL ANIMATIONS SPECIFIC TO CARD COMPONENTS */
+.transition-all,
+.transform,
+.hover\:scale-105,
+.active\:scale-95,
+.card-open,
+.hover\:opacity-100,
+.transition-opacity,
+.bg-gradient-to-r.from-black.via-red-900\/10.to-black,
+.bg-black\/60.border.rounded-lg,
+[class*="hover\:border-"],
+[class*="cursor-pointer"],
+[class*="bg-red-900"],
+[class*="hover\:bg-red-900"],
+[class*="transition-all"] {
+  transition-property: all !important;
+  transition-duration: 300ms !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transform: translate3d(0, 0, 0) !important;
+  will-change: transform, opacity !important;
+  backface-visibility: hidden !important;
+  perspective: 1000px !important;
+}
+
+/* Re-enable animations that make the site work */
+.transition-opacity {
+  transition-property: opacity !important;
+  transition-duration: 300ms !important;
+}
+
+.bg-red-900\/60.backdrop-blur-sm {
+  transition: opacity 300ms ease !important;
+}
+
+.hover\:opacity-100:hover {
+  opacity: 1 !important;
+}
+
+/* GUEST CARD SPECIFIC FIXES */
+.absolute.inset-0.bg-red-900\/60.backdrop-blur-sm.z-30 {
+  transition: opacity 300ms ease !important;
+  opacity: 0 !important;
+}
+
+.absolute.inset-0.bg-red-900\/60.backdrop-blur-sm.z-30:hover {
+  opacity: 1 !important;
 }
 
 @layer utilities {
@@ -39,24 +115,24 @@ body {
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -73,25 +149,25 @@ body {
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -446,18 +522,170 @@ body {
   flex-direction: column;
 }
 
-main {
-  flex: 1;
-}
-
 /* Improve transition smoothness */
 a,
 button {
   transition: all 0.2s ease-in-out;
 }
 
-/* Ensure smooth animations */
+/* Ensure text remains crisp */
 * {
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Enable smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Page transition styles - COMPLETELY REMOVED all transitions */
+
+/* Page transition - minimal impact */
+.page-transition,
+.page-transition-exit,
+.page-transition-enter,
+body.page-transitioning > main {
+  /* No specific styles */
+}
+
+/* Only disable during actual transitions */
+html.transitioning * {
+  animation-play-state: paused;
+}
+
+/* Normal scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+html.transitioning {
+  scroll-behavior: auto;
+}
+
+/* Subtle hover effects */
+a:hover,
+button:hover {
+  opacity: 0.9;
+}
+
+/* Reasonable transitions */
+*,
+*::before,
+*::after {
+  transition-duration: 0.2s;
+}
+
+/* Make sure content doesn't jump */
+body,
+main {
+  min-height: 100vh;
+}
+
+/* Root variables */
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: 0, 0, 0;
+}
+
+/* Global styles */
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  transition: background-color 0.3s ease;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* Smooth page transitions */
+@layer components {
+  .smooth-appear {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: smoothAppear 0.5s forwards;
+  }
+
+  @keyframes smoothAppear {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Main content transitions */
+.flex-1.flex.flex-col {
+  transition: opacity 0.3s ease;
+}
+
+/* Animation for scroll indicator */
+@keyframes scrollIndicator {
+  0% {
+    transform: translateX(-100%);
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    transform: translateX(100%);
+    background-position: 0% 50%;
+  }
+}
+
+.animate-scroll-indicator {
+  animation: scrollIndicator 1.5s ease-in-out infinite;
+  background-size: 200% 200%;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+}
+
+/* Clean base layer styles */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Subtle page transitions */
+.page-transition {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.page-transition-exit {
+  opacity: 0.95;
+}
+
+.page-transition-enter {
+  opacity: 0.95;
+}
+
+/* Subtle loading cursor */
+html.loading * {
+  cursor: wait;
+}
+
+/* Minimal content transitions */
+body.page-transitioning > main {
+  opacity: 0.98;
+  transition: opacity 0.2s ease;
+}
+
+/* Smooth button transitions */
+a,
+.cursor-pointer,
+button,
+[role="button"] {
+  transition: all 0.2s ease-out;
+}
+
+/* Main content structure */
+main {
+  transition: opacity 0.3s ease;
+  min-height: 100vh;
 }

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Buy Tickets Issue</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .debug-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>Debug Buy Tickets Button Issue</h1>
+        <p>This page is for debugging the Buy Tickets button issues on the homepage.</p>
+        
+        <h2>Test Redirects</h2>
+        <button id="testWindowLocationHref">Test window.location.href</button>
+        <button id="testWindowOpen">Test window.open</button>
+        <button id="testExternalSite">Test External Site</button>
+        
+        <h2>Debug Info</h2>
+        <pre id="debugInfo"></pre>
+    </div>
+    
+    <script>
+        // Helper to append debug info
+        function addDebugInfo(message) {
+            const debugInfo = document.getElementById('debugInfo');
+            debugInfo.textContent += message + '\n';
+        }
+        
+        // Log basic page information
+        addDebugInfo('Current pathname: ' + window.location.pathname);
+        addDebugInfo('Current hostname: ' + window.location.hostname);
+        addDebugInfo('User Agent: ' + navigator.userAgent);
+        
+        // Set up test buttons
+        document.getElementById('testWindowLocationHref').addEventListener('click', function() {
+            addDebugInfo('Attempting window.location.href navigation...');
+            window.location.href = '/tickets';
+        });
+        
+        document.getElementById('testWindowOpen').addEventListener('click', function() {
+            addDebugInfo('Attempting window.open navigation...');
+            window.open('/tickets', '_self');
+        });
+        
+        document.getElementById('testExternalSite').addEventListener('click', function() {
+            addDebugInfo('Attempting external site navigation...');
+            window.open('https://www.cityboxoffice.com/eventperformances.asp?evt=3182', '_self');
+        });
+    </script>
+</body>
+</html> 

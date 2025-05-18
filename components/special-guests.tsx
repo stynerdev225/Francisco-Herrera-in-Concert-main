@@ -149,14 +149,12 @@ const GuestCard = ({
     setChrisLang: (lang: 'en' | 'es') => void
 }) => {
     const handleCardClick = (e: React.MouseEvent) => {
-        // Call onClick callback with high priority
+        // Prevent default behavior and stop propagation
         e.preventDefault();
         e.stopPropagation();
-        console.log('Card component clicked directly for:', guest.name);
-        // Use setTimeout to ensure this executes after any event bubbling
-        setTimeout(() => {
-            onClick();
-        }, 0);
+
+        // Just call the onClick handler provided by parent component
+        onClick();
     };
 
     return (
@@ -176,13 +174,6 @@ const GuestCard = ({
                 }
             }}
         >
-            {/* Big clickable button overlay for better click targets */}
-            <button
-                className="absolute inset-0 w-full h-full z-40 opacity-0"
-                onClick={onClick}
-                aria-label={`Show ${guest.name} details`}
-            />
-
             {/* Clickable overlay - appears on hover */}
             <div className="absolute inset-0 bg-red-900/60 backdrop-blur-sm z-30 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
                 onClick={handleCardClick}>
@@ -301,9 +292,42 @@ export default function SpecialGuests() {
     const [lilianaLang, setLilianaLang] = useState<'en' | 'es'>('en');
     const [chrisLang, setChrisLang] = useState<'en' | 'es'>('en'); // Add toggle state for Chris's card
     const sectionRef = useRef<HTMLDivElement>(null); // Add ref for scrolling
+    const titleRef = useRef<HTMLHeadingElement>(null); // New ref for the section title
     const [clickIndicator, setClickIndicator] = useState('');
+    const [imagesPreloaded, setImagesPreloaded] = useState(false);
+    const [isTransitioning, setIsTransitioning] = useState(false);
+    const [lastFeaturedGuest, setLastFeaturedGuest] = useState<Guest | null>(null);
 
-    // Add custom scrollbar styles
+    // Calculate the current featured guest
+    const featuredGuest = guests[featuredGuestIndex];
+    // Calculate remaining guests (all guests except the featured one)
+    const remainingGuests = guests.filter((_, index) => index !== featuredGuestIndex);
+
+    // Fix TypeScript errors with image preloading
+    useEffect(() => {
+        // Preload all guest images
+        guests.forEach(guest => {
+            if (guest.image) {
+                // Using the HTML image element directly with proper type
+                const img = document.createElement('img');
+                img.src = guest.image;
+                img.style.display = 'none';
+                img.alt = guest.name;
+                document.body.appendChild(img);
+
+                // Remove the element after loading to prevent memory leaks
+                img.onload = () => {
+                    document.body.removeChild(img);
+                    console.log(`Preloaded image for ${guest.name}`);
+                };
+            }
+        });
+
+        // Mark images as preloaded immediately
+        setImagesPreloaded(true);
+    }, []);
+
+    // Add custom scrollbar and animation styles
     useEffect(() => {
         if (typeof document !== 'undefined') {
             const styleEl = document.createElement('style');
@@ -322,6 +346,15 @@ export default function SpecialGuests() {
                 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
                     background: rgba(220, 38, 38, 0.8);
                 }
+                
+                /* Fix for card and animation smoothness */
+                .transition-all, .transform, .hover\\:scale-105, .active\\:scale-95 {
+                    backface-visibility: hidden !important;
+                    transform: translateZ(0) !important;
+                    -webkit-font-smoothing: subpixel-antialiased !important;
+                    will-change: transform !important;
+                    perspective: 1000 !important;
+                }
             `;
             document.head.appendChild(styleEl);
             return () => {
@@ -330,25 +363,36 @@ export default function SpecialGuests() {
         }
     }, []);
 
-    // Function to handle guest change with smooth scrolling
+    // Function to handle guest change with smooth transitions
     const changeGuest = (newIndex: number) => {
-        console.log('changeGuest called with index:', newIndex);
+        if (isTransitioning) return;
+        console.log('FORCE CHANGE GUEST with index:', newIndex);
 
-        // Show click indicator
-        setClickIndicator(`Changing to guest: ${guests[newIndex].name}`);
+        // Start transition
+        setIsTransitioning(true);
+        setLastFeaturedGuest(featuredGuest);
 
-        // Force the update regardless of current index
-        setFeaturedGuestIndex(newIndex);
-        setCurrentWeek(newIndex + 1);
-
-        // Scroll to the section
+        // Update state with a slight delay to allow for transition
         setTimeout(() => {
-            if (sectionRef.current) {
-                sectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setFeaturedGuestIndex(newIndex);
+            setCurrentWeek(newIndex + 1);
+
+            // End transition after the new content is loaded
+            setTimeout(() => {
+                setIsTransitioning(false);
+                setLastFeaturedGuest(null);
+            }, 300);
+
+            // Optional: Scroll to section
+            if (titleRef.current) {
+                titleRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                console.log("Scrolled using titleRef");
             }
-            // Clear indicator after a delay
+
+            // Show visual feedback
+            setClickIndicator(`Changed to: ${guests[newIndex].name}`);
             setTimeout(() => setClickIndicator(''), 2000);
-        }, 50);
+        }, 300);
     };
 
     // We'll just use a fixed week number (always week 1) instead of calculating based on date
@@ -494,41 +538,100 @@ export default function SpecialGuests() {
         }
     };
 
-    // Get the featured guest - adding extra logging to debug
-    const currentIndex = featuredGuestIndex;
-    const featuredGuest = guests[currentIndex];
-
-    // Get the remaining guests (excluding the featured one)
-    const remainingGuests = guests.filter((_, index) => index !== currentIndex);
-
-    // Add effect to log whenever featuredGuestIndex changes
+    // Add transition styles
     useEffect(() => {
-        // Log the featured guest image URL for debugging
-        console.log('Featured guest changed to:', guests[featuredGuestIndex].name);
-        console.log('Image URL:', guests[featuredGuestIndex].image);
-    }, [featuredGuestIndex]);
-
-    // Debug function to track card clicks
-    const handleGuestCardClick = (guestName: string) => {
-        console.log(`Card clicked for guest: ${guestName}`);
-        const guestIndex = guests.findIndex(g => g.name === guestName);
-        if (guestIndex !== -1) {
-            console.log(`Found guest at index ${guestIndex}, changing featured guest`);
-            // Force a synchronous update
-            changeGuest(guestIndex);
+        if (typeof document !== 'undefined') {
+            const styleEl = document.createElement('style');
+            styleEl.innerHTML = `
+                /* Existing styles */
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 6px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: rgba(0, 0, 0, 0.2);
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: rgba(220, 38, 38, 0.5);
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: rgba(220, 38, 38, 0.8);
+                }
+                
+                /* Fix for card and animation smoothness */
+                .transition-all, .transform, .hover\\:scale-105, .active\\:scale-95 {
+                    backface-visibility: hidden !important;
+                    transform: translateZ(0) !important;
+                    -webkit-font-smoothing: subpixel-antialiased !important;
+                    will-change: transform !important;
+                    perspective: 1000 !important;
+                }
+                
+                /* Fade transition for guest images */
+                .guest-fade-enter {
+                    opacity: 0;
+                }
+                .guest-fade-enter-active {
+                    opacity: 1;
+                    transition: opacity 300ms ease-in;
+                }
+                .guest-fade-exit {
+                    opacity: 1;
+                }
+                .guest-fade-exit-active {
+                    opacity: 0;
+                    transition: opacity 300ms ease-out;
+                }
+                
+                /* Smooth thumbnail click transition */
+                .featured-guest-container {
+                    position: relative;
+                }
+                .featured-guest-image {
+                    opacity: 0;
+                    animation: fadeIn 0.5s forwards;
+                }
+                .featured-guest-image.exiting {
+                    animation: fadeOut 0.3s forwards;
+                }
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @keyframes fadeOut {
+                    from { opacity: 1; }
+                    to { opacity: 0; }
+                }
+            `;
+            document.head.appendChild(styleEl);
+            return () => {
+                document.head.removeChild(styleEl);
+            };
         }
-    };
+    }, []);
 
     return (
         <div className="bg-gradient-to-r from-black via-red-900/10 to-black py-16" ref={sectionRef}>
             <div className="container mx-auto px-4">
+                {/* Hidden image preloader - ensures all images are loaded instantly */}
+                <div style={{ display: 'none' }}>
+                    {guests.map((guest) => (
+                        guest.image && <img key={`preload-${guest.name}`} src={guest.image} alt="Preload" />
+                    ))}
+                </div>
+
                 {clickIndicator && (
                     <div className="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-pulse">
                         {clickIndicator}
                     </div>
                 )}
                 <div className="text-center mb-12">
-                    <h2 className="text-4xl md:text-5xl font-black text-white uppercase mb-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
+                    <h2
+                        ref={titleRef}
+                        className="text-4xl md:text-5xl font-black text-white uppercase mb-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"
+                        id="special-guests-title"
+                    >
                         <span className="text-red-500 mr-2">•</span>
                         {t("special.guests.title")}
                         <span className="text-red-500 ml-2">•</span>
@@ -556,9 +659,30 @@ export default function SpecialGuests() {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
-                            {/* Featured Guest Image - Made exactly square with consistent frame */}
-                            <div className="relative h-[450px] md:h-[500px] lg:h-[550px] overflow-hidden rounded-2xl border-4 border-red-500/30 bg-black/70 shadow-lg">
+                            {/* Featured Guest Image - with smooth transition */}
+                            <div className="relative h-[450px] md:h-[500px] lg:h-[550px] overflow-hidden rounded-2xl border-4 border-red-500/30 bg-black/70 shadow-lg featured-guest-container">
                                 <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-transparent to-red-900/20 z-10 rounded-xl pointer-events-none"></div>
+
+                                {/* Last featured guest (for transition) */}
+                                {isTransitioning && lastFeaturedGuest && lastFeaturedGuest.image && (
+                                    <div className="absolute inset-0 w-full h-full overflow-hidden rounded-xl z-5">
+                                        <Image
+                                            key={`last-featured-${lastFeaturedGuest.name}`}
+                                            src={lastFeaturedGuest.image}
+                                            alt={lastFeaturedGuest.name}
+                                            fill
+                                            className={`${lastFeaturedGuest.name === "Pedro Gómez" ? "object-contain" : "object-cover"} featured-guest-image exiting`}
+                                            unoptimized={true}
+                                            priority={true}
+                                            loading="eager"
+                                            style={{
+                                                objectPosition: lastFeaturedGuest.name === "Pedro Gómez" ? 'center 25%' : 'center'
+                                            }}
+                                        />
+                                    </div>
+                                )}
+
+                                {/* Current featured guest */}
                                 {featuredGuest.image ? (
                                     <div className="relative w-full h-full overflow-hidden rounded-xl">
                                         <Image
@@ -566,10 +690,13 @@ export default function SpecialGuests() {
                                             src={featuredGuest.image}
                                             alt={featuredGuest.name}
                                             fill
-                                            className={`${featuredGuest.name === "Pedro Gómez" ? "object-contain" : "object-cover"}`}
+                                            className={`${featuredGuest.name === "Pedro Gómez" ? "object-contain" : "object-cover"} featured-guest-image`}
                                             unoptimized={true}
-                                            style={featuredGuest.name === "Pedro Gómez" ? { objectPosition: 'center 25%' } : {}}
                                             priority={true}
+                                            loading="eager"
+                                            style={{
+                                                objectPosition: featuredGuest.name === "Pedro Gómez" ? 'center 25%' : 'center'
+                                            }}
                                         />
                                     </div>
                                 ) : (
@@ -577,6 +704,7 @@ export default function SpecialGuests() {
                                         <span className="text-8xl text-red-500">♫</span>
                                     </div>
                                 )}
+
                                 {/* Image overlay with guest name for mobile */}
                                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-4 md:hidden">
                                     <h3 className="text-2xl font-black text-white">{featuredGuest.name}</h3>
@@ -675,21 +803,16 @@ export default function SpecialGuests() {
                             return (
                                 <div
                                     key={index}
-                                    onClick={() => {
-                                        console.log(`Direct div click for ${guest.name} at index ${guestIndex}`);
-                                        changeGuest(guestIndex);
-                                    }}
-                                    onMouseDown={() => {
-                                        console.log(`Direct div mouse down for ${guest.name} at index ${guestIndex}`);
-                                        changeGuest(guestIndex);
-                                    }}
-                                    className="cursor-pointer hover:scale-105 transform transition-all duration-300"
+                                    className={`cursor-pointer transform transition-all duration-300 ${isTransitioning ? '' : 'hover:scale-105'
+                                        }`}
                                 >
                                     <GuestCard
                                         guest={guest}
                                         onClick={() => {
-                                            console.log(`GuestCard onClick callback for ${guest.name}`);
-                                            changeGuest(guestIndex);
+                                            if (!isTransitioning) {
+                                                console.log(`GuestCard onClick callback for ${guest.name}`);
+                                                changeGuest(guestIndex);
+                                            }
                                         }}
                                         language={language}
                                         lilianaLang={lilianaLang}

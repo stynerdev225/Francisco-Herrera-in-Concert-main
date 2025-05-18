@@ -171,6 +171,25 @@ const albums: Album[] = [
     }
 ]
 
+// Add styles for the rotating banner if not already present
+const styles = `
+@keyframes tickets-banner {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.animate-tickets-banner {
+    animation: tickets-banner 40s linear infinite;
+}
+`;
+
+// Append styles to the document
+if (typeof document !== 'undefined') {
+    const styleElement = document.createElement('style');
+    styleElement.textContent = styles;
+    document.head.appendChild(styleElement);
+}
+
 export default function MusicSection() {
     const { t, language } = useLanguage()
     const [currentlyPlaying, setCurrentlyPlaying] = useState<number | null>(null)
@@ -182,8 +201,8 @@ export default function MusicSection() {
 
     // Audio URLs - Using local MP4 files
     const [songUrls, setSongUrls] = useState<{ [key: number]: string }>({
-        1: "/music/nuevo-sol.mp4",
-        2: "/music/saber-ante-la-migra.mp4"
+        1: "/music/snippets/nuevo-sol.mp4",
+        2: "/music/snippets/saber-ante-la-migra.mp4"
     });
 
     // Function to handle play button click
@@ -376,8 +395,60 @@ export default function MusicSection() {
         };
     }, [triggerConfetti]);
 
+    // Add useEffect to force scroll to top when component mounts
+    useEffect(() => {
+        // Force immediate scroll to top when music section loads
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0; // For Safari
+
+        // Use multiple approaches with timeouts for reliability
+        for (let i = 1; i <= 10; i++) {
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+                document.documentElement.scrollTop = 0;
+                document.body.scrollTop = 0;
+            }, i * 50);
+        }
+    }, []);
+
     return (
         <div ref={sectionRef} className="relative w-full bg-gradient-to-r from-purple-700 via-blue-600 to-purple-700 overflow-y-auto flex flex-col min-h-screen">
+            {/* Very top rotating banner */}
+            <div className="absolute top-[3%] left-0 right-0 flex items-center overflow-hidden pointer-events-none">
+                <h2 className="text-[1.8rem] sm:text-[3rem] md:text-[5.5rem] lg:text-[8rem] font-bold text-white/10 whitespace-nowrap animate-tickets-banner" style={{ animationDuration: "25s" }}>
+                    ★ LA MIGRACIÓN FORTALEZA LA NACIÓN ★ MIGRATION STRENGTHENS THE NATION ★
+                </h2>
+            </div>
+
+            {/* Rotating banner below the top - similar to tickets page */}
+            <div className="absolute top-[10%] left-0 right-0 flex items-center overflow-hidden pointer-events-none">
+                <h2 className="text-[2rem] sm:text-[3.5rem] md:text-[6.5rem] lg:text-[9rem] font-bold text-white/10 whitespace-nowrap animate-tickets-banner" style={{ animationDuration: "35s" }}>
+                    ★ HONOR MIGRANTE ★ FRANCISCO HERRERA ★ HONOR MIGRANTE ★ FRANCISCO HERRERA ★
+                </h2>
+            </div>
+
+            {/* Middle rotating banner with music message */}
+            <div className="absolute inset-0 flex items-center overflow-hidden pointer-events-none">
+                <h1 className="text-[3rem] sm:text-[5rem] md:text-[10rem] lg:text-[15rem] font-bold text-white/10 whitespace-nowrap animate-tickets-banner">
+                    MUSIC • HONOR • MIGRANTE • FRANCISCO • HERRERA •
+                </h1>
+            </div>
+
+            {/* Additional banner positioned much higher */}
+            <div className="absolute top-[18%] left-0 right-0 flex items-center overflow-hidden pointer-events-none">
+                <h2 className="text-[2.2rem] sm:text-[3.8rem] md:text-[7rem] lg:text-[10rem] font-bold text-white/10 whitespace-nowrap animate-tickets-banner" style={{ animationDuration: "28s", animationDirection: "reverse" }}>
+                    ★ VOICES OF MIGRANTS ★ SONGS OF THE PEOPLE ★ VOICES OF MIGRANTS ★
+                </h2>
+            </div>
+
+            {/* Bottom rotating banner */}
+            <div className="absolute top-[70%] left-0 right-0 flex items-center overflow-hidden pointer-events-none">
+                <h2 className="text-[2rem] sm:text-[3.5rem] md:text-[6.5rem] lg:text-[9rem] font-bold text-white/10 whitespace-nowrap animate-tickets-banner" style={{ animationDuration: "30s" }}>
+                    ★ DOWNLOAD NOW ★ AVAILABLE TODAY ★ DOWNLOAD NOW ★ AVAILABLE TODAY ★
+                </h2>
+            </div>
+
             {/* Use the new header component that matches the image */}
             <MusicHeader />
 

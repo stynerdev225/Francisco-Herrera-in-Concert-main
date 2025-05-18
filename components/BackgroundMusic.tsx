@@ -6,8 +6,8 @@ import { useMusic } from '@/context/MusicContext';
 export default function BackgroundMusic() {
     const { isPlaying, toggleMusic, volume, setVolume, initializeAudio, songTitle } = useMusic();
     const [isVisible, setIsVisible] = useState(false);
-    const [autoplayMessage, setAutoplayMessage] = useState<string | null>(null);
-    const [showAutoplayMessage, setShowAutoplayMessage] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [showMessage, setShowMessage] = useState(false);
     const hasInitialized = useRef(false);
 
     // Initialize audio only once when component mounts
@@ -22,19 +22,10 @@ export default function BackgroundMusic() {
         // Show the player after a delay
         const timer = setTimeout(() => {
             setIsVisible(true);
-        }, 3000);
-
-        // Show autoplay message briefly
-        setShowAutoplayMessage(true);
-        setAutoplayMessage("Starting music soon...");
-
-        const messageTimer = setTimeout(() => {
-            setShowAutoplayMessage(false);
-        }, 5000);
+        }, 1000);
 
         return () => {
             clearTimeout(timer);
-            clearTimeout(messageTimer);
         };
     }, []);
 
@@ -44,49 +35,33 @@ export default function BackgroundMusic() {
         setVolume(newVolume);
     };
 
-    // Show a notification when autoplay status changes
-    useEffect(() => {
-        if (isPlaying) {
-            setAutoplayMessage(`Now playing: ${songTitle}`);
-        } else {
-            setAutoplayMessage("Music paused");
+    // Handle click on play button with error handling
+    const handlePlayClick = () => {
+        try {
+            // Clear any previous error messages
+            setErrorMessage(null);
+            toggleMusic();
+        } catch (err) {
+            console.error("Playback error:", err);
+            setErrorMessage("Tap again to play music. Your browser may require a direct tap to enable audio.");
+            setShowMessage(true);
+
+            // Hide error message after 5 seconds
+            setTimeout(() => {
+                setShowMessage(false);
+            }, 5000);
         }
-
-        setShowAutoplayMessage(true);
-
-        const timer = setTimeout(() => {
-            setShowAutoplayMessage(false);
-        }, 3000);
-
-        return () => clearTimeout(timer);
-    }, [isPlaying, songTitle]);
-
-    // Handle too much inactivity - hide player after a while
-    useEffect(() => {
-        let inactivityTimer: NodeJS.Timeout;
-
-        if (isVisible) {
-            inactivityTimer = setTimeout(() => {
-                if (!isPlaying) {
-                    setIsVisible(false);
-                }
-            }, 10000); // Hide after 10 seconds of inactivity if not playing
-        }
-
-        return () => {
-            if (inactivityTimer) clearTimeout(inactivityTimer);
-        };
-    }, [isVisible, isPlaying]);
+    };
 
     // Don't render anything until we're ready to show
-    if (!isVisible && !isPlaying && !showAutoplayMessage) return null;
+    if (!isVisible && !isPlaying && !showMessage) return null;
 
     return (
         <>
-            {/* Autoplay notification */}
-            {showAutoplayMessage && (
+            {/* Error message */}
+            {showMessage && errorMessage && (
                 <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-black/80 text-white px-4 py-2 rounded-full text-sm font-medium z-50 shadow-lg border border-red-500/20 animate-fade-in-up">
-                    {autoplayMessage}
+                    {errorMessage}
                 </div>
             )}
 
@@ -103,9 +78,9 @@ export default function BackgroundMusic() {
 
                     {/* Play/Pause button */}
                     <button
-                        onClick={toggleMusic}
+                        onClick={handlePlayClick}
                         className="relative z-10 w-10 h-10 rounded-full flex items-center justify-center bg-red-600 hover:bg-red-700 transition-colors"
-                        title={isPlaying ? `Pause ${songTitle}` : "Play Music"}
+                        title={isPlaying ? `Pause ${songTitle}` : `Play ${songTitle}`}
                     >
                         {isPlaying ? (
                             <div className="flex justify-center items-center w-full">
@@ -146,6 +121,8 @@ export default function BackgroundMusic() {
                                     value={volume}
                                     onChange={handleVolumeChange}
                                     className="w-full h-1 rounded-full appearance-none bg-gray-700 outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-red-500"
+                                    aria-label="Volume Control"
+                                    title="Adjust Volume"
                                 />
                             </div>
                         </div>

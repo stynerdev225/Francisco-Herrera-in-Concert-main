@@ -54,31 +54,21 @@ export default function Navigation() {
     const { t, language } = useLanguage();
     const pathname = usePathname();
     const router = useRouter();
-    const [activeTab, setActiveTab] = useState<string | null>(null);
     const menuButtonRef = useRef<HTMLButtonElement>(null);
-    const [touchFeedback, setTouchFeedback] = useState<string | null>(null);
-    const [isNavigating, setIsNavigating] = useState(false);
     const hasInitialized = useRef(false);
 
     const { isPlaying, toggleMusic, currentSong, initializeAudio, songTitle } = useMusic();
 
     useEffect(() => {
-        // Initialize the active tab based on the current pathname when component mounts
-        if (pathname !== '/') {
-            setActiveTab(pathname);
-        }
-
         // Initialize audio only once when component mounts
         if (!hasInitialized.current) {
             initializeAudio();
             hasInitialized.current = true;
         }
-    }, [pathname, initializeAudio]);
+    }, [initializeAudio]);
 
     // Enhanced toggle menu with debounce protection to prevent double-tap issues
     const toggleMenu = () => {
-        if (isNavigating) return; // Prevent toggle during navigation
-
         setMenuOpen(prevState => !prevState);
 
         // Add haptic feedback for better mobile experience
@@ -111,15 +101,7 @@ export default function Navigation() {
         };
     }, [menuOpen]);
 
-    const handleTabClick = (path: string) => {
-        setActiveTab(path);
-    };
-
-    const handleLogoClick = () => {
-        setActiveTab(null);
-    };
-
-    const handleLinkClick = () => {
+    const handleTabClick = () => {
         // Close menu when any link is clicked
         setMenuOpen(false);
 
@@ -129,28 +111,13 @@ export default function Navigation() {
         }
     };
 
-    // Enhanced navigation function with touch feedback and navigation protection
-    const navigateTo = (path: string) => {
-        if (isNavigating) return; // Prevent multiple rapid taps from causing navigation issues
+    const handleLogoClick = () => {
+        setMenuOpen(false);
 
-        setIsNavigating(true); // Set navigating flag to prevent double-navigation
-        setTouchFeedback(path); // Set visual feedback
-        handleLinkClick();
-        handleTabClick(path);
-
-        // Add haptic feedback for better mobile experience
+        // Add haptic feedback
         if (navigator.vibrate) {
-            navigator.vibrate([50, 30, 50]); // Pattern for navigation feedback
+            navigator.vibrate(50);
         }
-
-        // Use router.push for client-side navigation instead of window.location
-        router.push(path);
-
-        // Reset navigation flag after a timeout
-        setTimeout(() => {
-            setTouchFeedback(null); // Reset feedback state
-            setIsNavigating(false);
-        }, 300);
     };
 
     return (
@@ -160,11 +127,11 @@ export default function Navigation() {
                 <div className="flex items-center justify-between h-20 sm:h-28 py-2 sm:py-6">
                     {/* Logo section - made smaller on mobile */}
                     <div className="flex-shrink-0 flex items-center">
-                        <Link href="/" className="flex items-center space-x-2 sm:space-x-4 group" onClick={(e) => {
-                            e.preventDefault();
-                            handleLogoClick();
-                            navigateTo("/");
-                        }}>
+                        <Link
+                            href="/"
+                            className="flex items-center space-x-2 sm:space-x-4 group cursor-pointer"
+                            onClick={handleLogoClick}
+                        >
                             <span className="text-red-500 text-xl sm:text-3xl font-bold bg-black/40 rounded-full w-8 h-8 sm:w-14 sm:h-14 flex items-center justify-center transform group-hover:scale-110 transition-transform shadow-lg shadow-red-500/20 border border-red-500/30 relative before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-br before:from-red-400 before:to-red-600 before:opacity-30 before:blur-sm">
                                 <span className="relative z-10 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">♫</span>
                             </span>
@@ -198,44 +165,44 @@ export default function Navigation() {
                                 <Link
                                     key={item.key}
                                     href={item.href}
-                                    className={`px-6 py-3.5 rounded-xl text-base font-bold uppercase tracking-wide transition-all duration-300 transform hover:-translate-y-1 ${(activeTab === item.href)
-                                        ? "bg-gradient-to-r from-red-600 to-red-500 text-white shadow-[0_5px_0_rgb(127,29,29)] hover:shadow-[0_3px_0_rgb(127,29,29)] active:shadow-none active:translate-y-1"
-                                        : "text-gray-200 hover:bg-white/5 hover:text-white shadow-[0_3px_0_rgba(255,255,255,0.1)] hover:shadow-[0_5px_0_rgba(255,255,255,0.05)]"
+                                    onClick={handleTabClick}
+                                    className={`px-6 py-3.5 rounded-xl text-base font-bold uppercase tracking-wide transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 ${(pathname === item.href)
+                                        ? "text-white shadow-[0_7px_0_rgba(239,68,68,0.8),0_4px_12px_rgba(239,68,68,0.5)] hover:shadow-[0_9px_0_rgba(239,68,68,0.7),0_6px_15px_rgba(239,68,68,0.5)] active:shadow-[0_2px_0_rgba(239,68,68,0.6)] active:translate-y-1"
+                                        : "text-gray-200 hover:bg-white/5 hover:text-white shadow-[0_6px_0_rgba(239,68,68,0.3),0_4px_8px_rgba(0,0,0,0.2)] hover:shadow-[0_8px_0_rgba(239,68,68,0.2),0_6px_10px_rgba(0,0,0,0.25)] active:shadow-[0_2px_0_rgba(239,68,68,0.3)] active:translate-y-1"
                                         }`}
-                                    onClick={() => navigateTo(item.href)}
                                 >
-                                    <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">{t(item.translationKey)}</span>
+                                    <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)] relative z-10">{t(item.translationKey)}</span>
                                 </Link>
                             ))}
                             <Link
                                 key="buy tickets"
                                 href="/tickets"
-                                className="nav-tickets-button px-6 py-3.5 rounded-xl text-base font-bold uppercase tracking-wide transition-all duration-300 bg-gradient-to-r from-red-500 to-red-600 text-white cursor-pointer"
+                                onClick={handleTabClick}
+                                className="nav-tickets-button px-6 py-3.5 rounded-xl text-base font-bold uppercase tracking-wide transition-all duration-300 bg-gradient-to-r from-red-500 to-red-600 text-white cursor-pointer transform hover:scale-105 hover:-translate-y-1 shadow-[0_7px_0_rgb(153,27,27),0_5px_10px_rgba(0,0,0,0.4)] hover:shadow-[0_5px_0_rgb(153,27,27),0_3px_8px_rgba(0,0,0,0.3)] active:shadow-none active:translate-y-1"
                                 style={{
                                     touchAction: 'manipulation',
                                     WebkitTapHighlightColor: 'transparent',
                                     whiteSpace: 'nowrap',
                                     minWidth: language === 'es' ? '210px' : '160px'
                                 }}
-                                onClick={() => navigateTo("/tickets")}
                             >
-                                <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">{t("buy tickets")}</span>
+                                <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)] relative z-10">{t("buy tickets")}</span>
                             </Link>
                             <Link
                                 key="contact"
                                 href="/contact"
-                                className={`px-6 py-3.5 rounded-xl text-base font-bold uppercase tracking-wide transition-all duration-300 transform hover:-translate-y-1 ${(activeTab === "/contact")
-                                    ? "bg-gradient-to-r from-red-600 to-red-500 text-white shadow-[0_5px_0_rgb(127,29,29)] hover:shadow-[0_3px_0_rgb(127,29,29)] active:shadow-none active:translate-y-1"
-                                    : "text-gray-200 hover:bg-white/5 hover:text-white shadow-[0_3px_0_rgba(255,255,255,0.1)] hover:shadow-[0_5px_0_rgba(255,255,255,0.05)]"
+                                onClick={handleTabClick}
+                                className={`px-6 py-3.5 rounded-xl text-base font-bold uppercase tracking-wide transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 ${(pathname === "/contact")
+                                    ? "text-white shadow-[0_7px_0_rgba(239,68,68,0.8),0_4px_12px_rgba(239,68,68,0.5)] hover:shadow-[0_9px_0_rgba(239,68,68,0.7),0_6px_15px_rgba(239,68,68,0.5)] active:shadow-[0_2px_0_rgba(239,68,68,0.6)] active:translate-y-1"
+                                    : "text-gray-200 hover:bg-white/5 hover:text-white shadow-[0_6px_0_rgba(239,68,68,0.3),0_4px_8px_rgba(0,0,0,0.2)] hover:shadow-[0_8px_0_rgba(239,68,68,0.2),0_6px_10px_rgba(0,0,0,0.25)] active:shadow-[0_2px_0_rgba(239,68,68,0.3)] active:translate-y-1"
                                     }`}
-                                onClick={() => navigateTo("/contact")}
                             >
-                                <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">{t("contact")}</span>
+                                <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)] relative z-10">{t("contact")}</span>
                             </Link>
                             <div className="ml-4">
                                 <LanguageToggle
                                     variant="pill"
-                                    className="py-3 px-6 font-bold shadow-[0_4px_0_rgba(239,68,68,0.3)] hover:-translate-y-1 hover:shadow-[0_6px_0_rgba(239,68,68,0.2)] transition-all transform text-base"
+                                    className="py-3 px-6 font-bold shadow-[0_6px_0_rgba(239,68,68,0.3),0_4px_8px_rgba(0,0,0,0.2)] hover:-translate-y-1 hover:scale-105 hover:shadow-[0_8px_0_rgba(239,68,68,0.2),0_6px_10px_rgba(0,0,0,0.25)] active:shadow-[0_2px_0_rgba(239,68,68,0.3)] active:translate-y-1 transition-all transform text-base"
                                 />
                             </div>
 

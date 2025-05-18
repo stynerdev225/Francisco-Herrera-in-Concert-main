@@ -187,6 +187,23 @@ export default function BuyTicketsSection() {
     // Set the concert date (June 21, 2025 at 7:00 PM)
     const concertDate = new Date('2025-06-21T19:00:00');
 
+    // Force scroll to top when component mounts
+    useEffect(() => {
+        // Force immediate scroll to top when tickets page loads
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0; // For Safari
+
+        // Use multiple approaches with timeouts for extreme reliability
+        for (let i = 1; i <= 15; i++) {
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+                document.documentElement.scrollTop = 0;
+                document.body.scrollTop = 0;
+            }, i * 50);
+        }
+    }, []);
+
     // FIXED CONFETTI FOR ALL DEVICES INCLUDING MOBILE
     const triggerConfetti = useCallback(() => {
         if (confettiTriggeredRef.current) return;
@@ -286,9 +303,9 @@ export default function BuyTicketsSection() {
 
     return (
         <section ref={sectionRef} className="relative w-full py-16 sm:py-20 md:py-24 overflow-hidden">
-            {/* Custom background with in-between color at the top */}
+            {/* Custom background with from-blue-600 to-blue-900 gradient at the top */}
             <div className="absolute inset-0 z-0">
-                <div className="absolute inset-0 bg-gradient-to-b from-blue-700/90 via-blue-800 to-purple-900"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-blue-600 via-blue-800 to-purple-900"></div>
             </div>
 
             {/* Background patterns */}
@@ -302,11 +319,27 @@ export default function BuyTicketsSection() {
                 <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-purple-900 to-transparent"></div>
             </div>
 
+
+
             {/* Rotating Banner Text - Modified to be properly responsive on mobile */}
             <div className="absolute inset-0 flex items-center overflow-hidden pointer-events-none">
                 <h1 className="text-[3rem] sm:text-[5rem] md:text-[10rem] lg:text-[15rem] font-bold text-white/10 whitespace-nowrap animate-tickets-banner">
                     MIGRATION • STRENGTHENS • NATION • FRANCISCO • HERRERA •
                 </h1>
+            </div>
+
+            {/* Second rotating banner for tickets - adjusted size and position */}
+            <div className="absolute top-[12%] left-0 right-0 flex items-center overflow-hidden pointer-events-none">
+                <h2 className="text-[2rem] sm:text-[3.5rem] md:text-[6.5rem] lg:text-[9rem] font-bold text-white/10 whitespace-nowrap animate-tickets-banner" style={{ animationDuration: "35s" }}>
+                    ★ BUY YOUR TICKETS NOW ★ LIMITED SEATS AVAILABLE ★ BUY YOUR TICKETS NOW ★ LIMITED SEATS AVAILABLE ★
+                </h2>
+            </div>
+
+            {/* Third rotating banner - positioned below the middle */}
+            <div className="absolute top-[70%] left-0 right-0 flex items-center overflow-hidden pointer-events-none">
+                <h2 className="text-[2rem] sm:text-[3.5rem] md:text-[6.5rem] lg:text-[9rem] font-bold text-white/10 whitespace-nowrap animate-tickets-banner" style={{ animationDuration: "30s" }}>
+                    ★ BUY YOUR TICKETS NOW ★ LIMITED SEATS AVAILABLE ★ BUY YOUR TICKETS NOW ★ LIMITED SEATS AVAILABLE ★
+                </h2>
             </div>
 
             {/* Content container */}
@@ -324,32 +357,38 @@ export default function BuyTicketsSection() {
                             }}
                         ></div>
 
-                        {/* Left decorative dot with increased visibility */}
+                        {/* Left decorative dot with 3D pulse */}
                         <div className="text-center mr-3 md:mr-5 shrink-0">
                             <span
-                                className="text-red-500 text-4xl md:text-6xl font-bold decorative-dot inline-block"
+                                className="text-red-500 text-4xl md:text-6xl font-bold decorative-dot inline-block animate-dot-pulse"
                                 style={{
-                                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.6))',
-                                    transform: 'scale(1.3)'
+                                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.6))'
                                 }}
                             >•</span>
                         </div>
 
                         <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white uppercase tracking-tight title-3d py-2"
                             style={{
+                                transform: 'perspective(1000px)',
+                                transformStyle: 'preserve-3d',
                                 textShadow: '0 2px 0 #cccccc, 0 3px 0 #c9c9c9, 0 4px 0 #bbb, 0 5px 0 #b9b9b9, 0 6px 0 #aaa, 0 7px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15)'
                             }}>
-                            <span className="text-red-500 block">FRANCISCO HERRERA</span>
-                            <span className="text-white mt-1 block" style={{ border: 'none', boxShadow: 'none', textShadow: '0 2px 0 #cccccc, 0 3px 0 #c9c9c9, 0 4px 0 #bbb, 0 5px 0 #b9b9b9, 0 6px 0 #aaa, 0 7px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15)' }}>IN&nbsp;CONCERT</span>
+                            <span className="text-red-500 block" style={{
+                                textShadow: '0 0 5px rgba(239, 68, 68, 0.5), 0 1px 1px rgba(0,0,0,0.8), 0 2px 2px rgba(0,0,0,0.7)'
+                            }}>FRANCISCO HERRERA</span>
+                            <span className="text-white mt-1 block" style={{
+                                transformStyle: 'preserve-3d',
+                                perspective: '1000px',
+                                display: 'inline-block'
+                            }}>IN&nbsp;CONCERT</span>
                         </h2>
 
-                        {/* Right decorative dot with increased visibility */}
+                        {/* Right decorative dot with 3D pulse */}
                         <div className="text-center ml-3 md:ml-5 shrink-0">
                             <span
-                                className="text-red-500 text-4xl md:text-6xl font-bold decorative-dot inline-block"
+                                className="text-red-500 text-4xl md:text-6xl font-bold decorative-dot inline-block animate-dot-pulse animation-delay-600"
                                 style={{
-                                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.6))',
-                                    transform: 'scale(1.3)'
+                                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.6))'
                                 }}
                             >•</span>
                         </div>
@@ -367,6 +406,8 @@ export default function BuyTicketsSection() {
                     <p className="text-xl sm:text-2xl text-white/90 max-w-3xl mx-auto font-medium mt-5">
                         {t('tickets.subtitle') || 'La Migración Fortaleza la Nación / Migration Strengthens the Nation'}
                     </p>
+
+
                 </div>
 
                 {/* Main ticket card */}
@@ -536,8 +577,69 @@ export default function BuyTicketsSection() {
     );
 }
 
-// Add styles for the rotating banner
+// Add styles for breathing animation and rotating banner
 const styles = `
+@keyframes breathe-3d {
+    0%, 100% { 
+        transform: translateZ(0) rotateX(0deg) translateY(0);
+        text-shadow: 0 2px 0 #cccccc, 0 3px 0 #c9c9c9, 0 4px 0 #bbb, 0 5px 0 #b9b9b9, 0 6px 0 #aaa, 0 7px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15);
+    }
+    50% { 
+        transform: translateZ(10px) rotateX(2deg) translateY(-5px);
+        text-shadow: 0 4px 0 #cccccc, 0 5px 0 #c9c9c9, 0 6px 0 #bbb, 0 7px 0 #b9b9b9, 0 8px 0 #aaa, 0 9px 2px rgba(0,0,0,.1), 0 0 10px rgba(0,0,0,.2), 0 2px 5px rgba(0,0,0,.3), 0 5px 7px rgba(0,0,0,.2), 0 7px 12px rgba(0,0,0,.25), 0 12px 15px rgba(0,0,0,.2), 0 25px 25px rgba(0,0,0,.15);
+    }
+}
+
+@keyframes red-3d-pulse {
+    0%, 100% { 
+        transform: translateZ(0); 
+        text-shadow: 0 0 5px rgba(239, 68, 68, 0.5), 0 1px 1px rgba(0,0,0,0.8), 0 2px 2px rgba(0,0,0,0.7);
+    }
+    50% { 
+        transform: translateZ(15px); 
+        text-shadow: 0 0 10px rgba(239, 68, 68, 0.7), 0 0 20px rgba(239, 68, 68, 0.4), 0 2px 2px rgba(0,0,0,0.8), 0 4px 4px rgba(0,0,0,0.7);
+    }
+}
+
+@keyframes dot-pulse {
+    0%, 100% { 
+        transform: scale(1.3) translateZ(0); 
+        text-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
+    }
+    50% { 
+        transform: scale(1.6) translateZ(5px); 
+        text-shadow: 0 0 10px rgba(239, 68, 68, 0.7), 0 0 20px rgba(239, 68, 68, 0.4);
+    }
+}
+
+.animate-breathe {
+    animation: breathe-3d 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+}
+
+.animate-red-3d {
+    animation: red-3d-pulse 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+}
+
+.animate-dot-pulse {
+    animation: dot-pulse 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    transform-style: preserve-3d;
+}
+
+.animation-delay-300 {
+    animation-delay: 0.3s;
+}
+
+.animation-delay-600 {
+    animation-delay: 0.6s;
+}
+
+.animation-delay-900 {
+    animation-delay: 0.9s;
+}
 @keyframes tickets-banner {
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
@@ -554,6 +656,15 @@ const styles = `
 
 .buy-tickets-button {
     animation: buy-tickets-pulse 2s ease-in-out infinite;
+}
+
+@keyframes tickets-banner-fast {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.animate-tickets-banner-fast {
+    animation: tickets-banner-fast 20s linear infinite;
 }
 `;
 

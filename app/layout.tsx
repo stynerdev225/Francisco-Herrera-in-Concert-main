@@ -6,17 +6,17 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import BackgroundMusic from "@/components/BackgroundMusic"
-import { LanguageProvider } from "@/context/LanguageContext"
-import { MusicProvider } from "@/context/MusicContext"
+import { LanguageProvider } from '@/context/LanguageContext'
+import { MusicProvider } from '@/context/MusicContext'
 import Footer from "@/components/footer"
 import dynamic from "next/dynamic"
-import HeroSection from "@/components/hero-section"
+import Providers from "./providers"
 
 const Navigation = dynamic(() => import("@/components/Navigation"), { ssr: false })
 // Import our new mobile-only navigation
 const MobileNavBar = dynamic(() => import("@/components/MobileNavBar"), { ssr: false })
+const ScrollToTop = dynamic(() => import("@/components/ScrollToTop"), { ssr: false })
 const PageTransition = dynamic(() => import("@/components/PageTransition"), { ssr: false })
-const NavigationProgress = dynamic(() => import("@/components/NavigationProgress"), { ssr: false })
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -54,24 +54,28 @@ export default function RootLayout({
 }): React.JSX.Element {
   return (
     <html lang="en" className={inter.className} suppressHydrationWarning>
+      <head>
+        {/* No scripts here */}
+      </head>
       <body className="flex flex-col min-h-screen overflow-x-hidden">
-        <LanguageProvider>
-          <MusicProvider>
-            <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-              <NavigationProgress />
-              <Navigation />
-              <div className="flex-1 flex flex-col">
-                <PageTransition>
+        <Providers>
+          <LanguageProvider>
+            <MusicProvider>
+              <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+                <ScrollToTop />
+                <PageTransition />
+                <Navigation />
+                <div className="flex-1 flex flex-col">
                   {children}
-                </PageTransition>
-              </div>
-              <Footer />
-              <BackgroundMusic />
-              {/* Add our mobile-only navbar here - it will automatically only show on mobile */}
-              <MobileNavBar />
-            </ThemeProvider>
-          </MusicProvider>
-        </LanguageProvider>
+                </div>
+                <Footer />
+                <BackgroundMusic />
+                {/* Add our mobile-only navbar here - it will automatically only show on mobile */}
+                <MobileNavBar />
+              </ThemeProvider>
+            </MusicProvider>
+          </LanguageProvider>
+        </Providers>
       </body>
     </html>
   )
