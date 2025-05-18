@@ -40,7 +40,7 @@ git clone https://github.com/stynerdev225/francisco-herrera-main.git
 cd francisco-herrera-main
 ```
 
-2. Install dependencies
+1. Install dependencies
 
 ```bash
 npm install
@@ -48,7 +48,7 @@ npm install
 yarn install
 ```
 
-3. Run the development server
+1. Run the development server
 
 ```bash
 npm run dev
@@ -56,7 +56,7 @@ npm run dev
 yarn dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+1. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ## Project Structure
 
@@ -102,4 +102,4 @@ yarn start
 
 ---
 
-*This project was created with care and attention to detail. For any questions or support, please contact the developer through the provided contact information.* 
+*This project was created with care and attention to detail. For any questions or support, please contact the developer through the provided contact information.*
