@@ -102,4 +102,4 @@ yarn start
 
 ---
 
-*This project was created with care and attention to detail. For any questions or support, please contact the developer through the provided contact information.*
+_This project was created with care and attention to detail. For any questions or support, please contact the developer through the provided contact information._
