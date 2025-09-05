@@ -1,6 +1,6 @@
 # Francisco Herrera - Music Artist Website
 
-![Francisco Herrera](public/images/francisco-concert-poster.png)
+![Francisco Herrera](https://pub-69c5f4c6114b43b2bb233e67012060c4.r2.dev/Thumbnail/FRANCISCO-HERRERA-IN-CONCERT.png)
 
 ## Project Overview
 
